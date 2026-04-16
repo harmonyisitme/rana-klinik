@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Takvim Görünümü | Rana Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+    <!-- FullCalendar JS (CSS'i de içinde barındırır) -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+    <style>
+        #calendar {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        /* FullCalendar özelleştirmeleri */
+        .fc .fc-button-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .fc .fc-button-primary:hover {
+            background-color: #0d2a4c;
+        }
+        .fc .fc-daygrid-day.fc-day-today {
+            background-color: #fff8e1;
+        }
+        .fc-event {
+            cursor: pointer;
+            border: none !important;
+        }
+        .detail-row { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+
+        /* Tooltip Stilleri */
+        #eventTooltip {
+            position: absolute;
+            display: none;
+            background-color: #333;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            z-index: 1001;
+            font-size: 13px;
+            max-width: 250px;
+            line-height: 1.4;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Toast Bildirim Alanı -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <header class="admin-header">
+        <a href="admin.html" class="logo" style="text-decoration: none; color: white;">Rana <span>Admin</span></a>
+        <div class="header-right">
+            <button class="btn-notification" id="darkModeBtn" title="Karanlık Mod">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="btn-notification" onclick="showToast('Sistem bildirimleri aktif.', 'info')" title="Bildirimler">
+                <i class="fas fa-bell"></i>
+            </button>
+            <a href="index.html" class="btn-site">Siteye Dön</a>
+            <button id="btnLogout" class="btn-logout">Çıkış Yap</button>
+        </div>
+    </header>
+
+    <main class="admin-container">
+        <!-- Modül Kartları (Hızlı Erişim) -->
+        <div class="admin-modules">
+            <a href="admin.html" class="module-card">
+                <div class="icon">📅</div>
+                <h3>Randevu Listesi</h3>
+                <p>Randevu taleplerini yönetin.</p>
+            </a>
+            <a href="admin-takvim.html" class="module-card active">
+                <div class="icon">🗓️</div>
+                <h3>Takvim Görünümü</h3>
+                <p>Randevuları takvimde görün.</p>
+            </a>
+            <a href="admin-hastalar.html" class="module-card">
+                <div class="icon">👥</div>
+                <h3>Hastalar</h3>
+                <p>Kayıtlı hastaları görüntüleyin.</p>
+            </a>
+            <a href="admin-blog.html" class="module-card">
+                <div class="icon">✍️</div>
+                <h3>Blog Yönetimi</h3>
+                <p>Blog yazılarını düzenleyin.</p>
+            </a>
+            <a href="admin-ayarlar.html" class="module-card">
+                <div class="icon">⚙️</div>
+                <h3>Site Ayarları</h3>
+                <p>İletişim ve hizmetleri güncelleyin.</p>
+            </a>
+        </div>
+
+        <div id="calendar"></div>
+    </main>
+
+    <!-- Tooltip Elementi -->
+    <div id="eventTooltip"></div>
+
+    <!-- Detay Modalı -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3 style="margin-bottom: 20px; color: var(--primary-color);">Randevu Detayları</h3>
+            <div id="modalIcerik" style="max-height: 60vh; overflow-y: auto; padding-right: 5px;">
+                <!-- JS ile doldurulacak -->
+            </div>
+            <div style="text-align: right; margin-top: 20px;">
+                <button onclick="document.getElementById('eventModal').style.display='none'" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Çıkış Onay Modalı -->
+    <div id="cikisModal" class="modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <span class="close-modal" id="closeCikisModal">&times;</span>
+            <h3 style="color: #333; margin-bottom: 15px;">Çıkış Yapılıyor</h3>
+            <p>Oturumunuzu sonlandırmak istediğinize emin misiniz?</p>
+            <div style="margin-top: 25px; display: flex; justify-content: center; gap: 15px;">
+                <button class="btn-action" style="background-color: #6c757d; color: white; font-size: 14px; padding: 8px 20px;" id="btnCikisVazgec">Vazgeç</button>
+                <button class="btn-action" style="background-color: #dc3545; color: white; font-size: 14px; padding: 8px 20px;" id="btnCikisOnay">Çıkış Yap</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="admin-takvim.js"></script>
+</body>
+</html>

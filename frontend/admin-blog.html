@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Yönetimi | Rana Klinik</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+    <style>
+        .blog-form-container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .form-group { margin-bottom: 20px; display: flex; flex-direction: column; }
+        .form-group label { margin-bottom: 8px; font-weight: 600; font-size: 14px; }
+        #mesajKutusu { margin-top: 15px; padding: 10px; border-radius: 8px; text-align: center; display: none; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <!-- Toast Bildirim Alanı -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <header class="admin-header">
+        <a href="admin.html" class="logo" style="text-decoration: none; color: white;">Rana <span>Admin</span></a>
+        <div class="header-right">
+            <button class="btn-notification" id="darkModeBtn" title="Karanlık Mod">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="btn-notification" onclick="showToast('Sistem bildirimleri aktif.', 'info')" title="Bildirimler">
+                <i class="fas fa-bell"></i>
+            </button>
+            <a href="index.html" class="btn-site">Siteye Dön</a>
+            <button id="btnLogout" class="btn-logout">Çıkış Yap</button>
+        </div>
+    </header>
+
+    <main class="admin-container">
+        <!-- Modül Kartları (Hızlı Erişim) -->
+        <div class="admin-modules">
+            <a href="admin.html" class="module-card">
+                <div class="icon">📅</div>
+                <h3>Randevu Listesi</h3>
+                <p>Randevu taleplerini yönetin.</p>
+            </a>
+            <a href="admin-takvim.html" class="module-card">
+                <div class="icon">🗓️</div>
+                <h3>Takvim Görünümü</h3>
+                <p>Randevuları takvimde görün.</p>
+            </a>
+            <a href="admin-hastalar.html" class="module-card">
+                <div class="icon">👥</div>
+                <h3>Hastalar</h3>
+                <p>Kayıtlı hastaları görüntüleyin.</p>
+            </a>
+            <a href="admin-blog.html" class="module-card active">
+                <div class="icon">✍️</div>
+                <h3>Blog Yönetimi</h3>
+                <p>Blog yazılarını düzenleyin.</p>
+            </a>
+            <a href="admin-ayarlar.html" class="module-card">
+                <div class="icon">⚙️</div>
+                <h3>Site Ayarları</h3>
+                <p>İletişim ve hizmetleri güncelleyin.</p>
+            </a>
+        </div>
+
+        <div class="header-action">
+            <h2 id="formBaslik">Yeni Blog Yazısı Ekle</h2>
+        </div>
+
+        <div class="blog-form-container">
+            <form id="blogFormu">
+                <div class="form-group">
+                    <label>Makale Başlığı <span style="color:red">*</span></label>
+                    <input type="text" id="baslik" required placeholder="Örn: İşitme Cihazı Alırken Nelere Dikkat Edilmeli?">
+                </div>
+                <div class="form-group">
+                    <label>Kapak Görseli</label>
+                    <input type="file" id="gorselDosya" accept="image/*">
+                    <!-- Mevcut görsel URL'ini saklamak için gizli input -->
+                    <input type="hidden" id="mevcutGorselUrl">
+                    <div id="gorselOnizleme" style="margin-top: 10px; display: none;"><img src="" style="height: 100px; border-radius: 5px; object-fit: cover;"></div>
+                </div>
+                <div class="form-group">
+                    <label>Yazar <span style="color:red">*</span></label>
+                    <input type="text" id="yazar" value="Uzman Odyolog" required>
+                </div>
+                <div class="form-group">
+                    <label>Makale İçeriği <span style="color:red">*</span></label>
+                    <textarea id="icerik" rows="8" required placeholder="Makalenizi buraya yazın..."></textarea>
+                </div>
+                <p style="font-size: 13px; color: #666; margin-bottom: 15px;"><span style="color:red">*</span> Zorunlu alanlar</p>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" id="btnYayinla" class="btn-submit">Makaleyi Yayınla</button>
+                    <button type="button" id="btnTaslak" class="btn-submit" style="background-color: #6c757d;">Taslak Olarak Kaydet</button>
+                    <button type="button" id="btnVazgec" class="btn-submit" style="background-color: #dc3545; display: none;">Vazgeç</button>
+                </div>
+            </form>
+            <div id="mesajKutusu"></div>
+        </div>
+    </main>
+
+    <!-- Çıkış Onay Modalı -->
+    <div id="cikisModal" class="modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <span class="close-modal" id="closeCikisModal">&times;</span>
+            <h3 style="color: #333; margin-bottom: 15px;">Çıkış Yapılıyor</h3>
+            <p>Oturumunuzu sonlandırmak istediğinize emin misiniz?</p>
+            <div style="margin-top: 25px; display: flex; justify-content: center; gap: 15px;">
+                <button class="btn-action" style="background-color: #6c757d; color: white; font-size: 14px; padding: 8px 20px;" id="btnCikisVazgec">Vazgeç</button>
+                <button class="btn-action" style="background-color: #dc3545; color: white; font-size: 14px; padding: 8px 20px;" id="btnCikisOnay">Çıkış Yap</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="admin-blog.js"></script>
+</body>
+</html>

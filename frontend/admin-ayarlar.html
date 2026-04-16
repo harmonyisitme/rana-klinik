@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Ayarları | Rana Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+    <style>
+        .settings-group { background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .settings-group h3 { margin-bottom: 15px; color: var(--primary-color); border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
+        .service-item { border: 1px solid #eee; padding: 15px; margin-bottom: 10px; border-radius: 5px; background: #f9f9f9; }
+
+        /* İkon Seçici Stilleri */
+        .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 10px; max-height: 400px; overflow-y: auto; padding: 10px; }
+        .icon-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; border: 1px solid #eee; border-radius: 5px; cursor: pointer; transition: all 0.2s; }
+        .icon-item:hover { background-color: #f0f2f5; border-color: var(--primary-color); transform: scale(1.05); }
+        .icon-item i { font-size: 24px; color: var(--primary-color); margin-bottom: 5px; }
+        .icon-item span { font-size: 10px; color: #666; text-align: center; word-break: break-all; display: none; }
+        .icon-item:hover span { display: block; }
+    </style>
+</head>
+<body>
+
+    <!-- Toast Bildirim Alanı -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <header class="admin-header">
+        <a href="admin.html" class="logo" style="text-decoration: none; color: white;">Rana <span>Admin</span></a>
+        <div class="header-right">
+            <button class="btn-notification" id="darkModeBtn" title="Karanlık Mod">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="btn-notification" onclick="showToast('Sistem bildirimleri aktif.', 'info')" title="Bildirimler">
+                <i class="fas fa-bell"></i>
+            </button>
+            <a href="index.html" class="btn-site">Siteye Dön</a>
+            <button id="btnLogout" class="btn-logout">Çıkış Yap</button>
+        </div>
+    </header>
+
+    <main class="admin-container">
+        <!-- Modül Kartları (Hızlı Erişim) -->
+        <div class="admin-modules">
+            <a href="admin.html" class="module-card">
+                <div class="icon">📅</div>
+                <h3>Randevu Listesi</h3>
+                <p>Randevu taleplerini yönetin.</p>
+            </a>
+            <a href="admin-takvim.html" class="module-card">
+                <div class="icon">🗓️</div>
+                <h3>Takvim Görünümü</h3>
+                <p>Randevuları takvimde görün.</p>
+            </a>
+            <a href="admin-hastalar.html" class="module-card">
+                <div class="icon">👥</div>
+                <h3>Hastalar</h3>
+                <p>Kayıtlı hastaları görüntüleyin.</p>
+            </a>
+            <a href="admin-blog.html" class="module-card">
+                <div class="icon">✍️</div>
+                <h3>Blog Yönetimi</h3>
+                <p>Blog yazılarını düzenleyin.</p>
+            </a>
+            <a href="admin-ayarlar.html" class="module-card active">
+                <div class="icon">⚙️</div>
+                <h3>Site Ayarları</h3>
+                <p>İletişim ve hizmetleri güncelleyin.</p>
+            </a>
+        </div>
+
+        <h2>Genel Site Ayarları</h2>
+        <div id="mesajKutusu" style="display:none; padding: 15px; margin-bottom: 20px; border-radius: 5px;"></div>
+
+        <form id="ayarlarFormu">
+            <!-- Logo Ayarları -->
+            <div class="settings-group">
+                <h3>🎨 Görsel Ayarları</h3>
+                <div class="form-row">
+                    <div>
+                        <label>Logo Yükle</label>
+                        <input type="file" id="logoDosya" accept="image/*">
+                        <input type="hidden" id="mevcutLogoUrl">
+                        <div id="logoOnizleme" style="margin-top: 10px; display: none;"><img src="" style="height: 50px;"></div>
+                    </div>
+                    <div>
+                        <label>Favicon Yükle (Sekme İkonu)</label>
+                        <input type="file" id="faviconDosya" accept="image/*">
+                        <input type="hidden" id="mevcutFaviconUrl">
+                        <div id="faviconOnizleme" style="margin-top: 10px; display: none;"><img src="" style="height: 32px;"></div>
+                    </div>
+                    <div>
+                        <label>Ana Sayfa Kapak Görseli</label>
+                        <input type="file" id="heroDosya" accept="image/*">
+                        <input type="hidden" id="mevcutHeroUrl">
+                        <div id="heroOnizleme" style="margin-top: 10px; display: none;"><img src="" style="height: 100px; object-fit: cover;"></div>
+                    </div>
+                    <div>
+                        <label>Site Ana Rengi</label>
+                        <input type="color" id="anaRenk" style="height: 50px; padding: 5px; cursor: pointer;">
+                    </div>
+                    <div>
+                        <label>Site İkincil Rengi (Accent)</label>
+                        <input type="color" id="ikincilRenk" style="height: 50px; padding: 5px; cursor: pointer;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hakkımızda Ayarları -->
+            <div class="settings-group">
+                <h3>ℹ️ Hakkımızda Sayfası</h3>
+                <div style="margin-bottom: 15px;">
+                    <label>Başlık</label>
+                    <input type="text" id="hakkimizdaBaslik" placeholder="Sayfa Başlığı">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label>İçerik</label>
+                    <textarea id="hakkimizdaIcerik" rows="6" placeholder="Hakkımızda yazısı..."></textarea>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label>Görsel</label>
+                    <input type="file" id="hakkimizdaDosya" accept="image/*">
+                    <input type="hidden" id="mevcutHakkimizdaUrl">
+                    <div id="hakkimizdaOnizleme" style="margin-top: 10px; display: none;"><img src="" style="height: 100px; object-fit: cover; border-radius: 5px;"></div>
+                </div>
+            </div>
+
+            <!-- Yasal Metinler -->
+            <div class="settings-group">
+                <h3>⚖️ Yasal Metinler</h3>
+                <div style="margin-bottom: 15px;">
+                    <label>Gizlilik Politikası</label>
+                    <textarea id="gizlilikPolitikasi" rows="4" placeholder="Gizlilik Politikası metni..."></textarea>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label>Kullanım Şartları</label>
+                    <textarea id="kullanimSartlari" rows="4" placeholder="Kullanım Şartları metni..."></textarea>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label>KVKK Aydınlatma Metni</label>
+                    <textarea id="kvkkMetni" rows="4" placeholder="KVKK Aydınlatma Metni..."></textarea>
+                </div>
+            </div>
+
+            <!-- İletişim Bilgileri -->
+            <div class="settings-group">
+                <h3>📞 İletişim Bilgileri</h3>
+                <div class="form-row">
+                    <div>
+                        <label>Telefon Numarası <span style="color:red">*</span></label>
+                        <input type="text" id="telefon" required>
+                    </div>
+                    <div>
+                        <label>E-posta Adresi <span style="color:red">*</span></label>
+                        <input type="email" id="email" required>
+                    </div>
+                </div>
+                <div>
+                    <label>Adres <span style="color:red">*</span></label>
+                    <input type="text" id="adres" required>
+                </div>
+                <div style="margin-top: 15px;">
+                    <label>Google Harita (Embed Linki veya "Haritayı Yerleştir" HTML Kodu)</label>
+                    <input type="text" id="haritaEmbed" placeholder='https://www.google.com/maps/embed?... veya <iframe src="...">'>
+                </div>
+            </div>
+
+            <!-- Çalışma Saatleri -->
+            <div class="settings-group">
+                <h3>⏰ Çalışma Saatleri</h3>
+                <div class="form-row">
+                    <div>
+                        <label>Pazartesi - Cuma</label>
+                        <input type="text" id="haftaici" placeholder="09:00 - 18:00">
+                    </div>
+                    <div>
+                        <label>Cumartesi</label>
+                        <input type="text" id="cumartesi" placeholder="10:00 - 14:00">
+                    </div>
+                    <div>
+                        <label>Pazar</label>
+                        <input type="text" id="pazar" placeholder="Kapalı">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sosyal Medya -->
+            <div class="settings-group">
+                <h3>🌐 Sosyal Medya Linkleri</h3>
+                <div class="form-row">
+                    <div>
+                        <label>Facebook</label>
+                        <input type="text" id="sm-facebook" placeholder="https://facebook.com/...">
+                    </div>
+                    <div>
+                        <label>Twitter (X)</label>
+                        <input type="text" id="sm-twitter" placeholder="https://twitter.com/...">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div>
+                        <label>Instagram</label>
+                        <input type="text" id="sm-instagram" placeholder="https://instagram.com/...">
+                    </div>
+                    <div>
+                        <label>LinkedIn</label>
+                        <input type="text" id="sm-linkedin" placeholder="https://linkedin.com/...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hizmetler -->
+            <div class="settings-group">
+                <h3>🛠️ Hizmetler (Başlık ve Özet)</h3>
+                <div id="hizmetlerContainer">
+                    <!-- JS ile doldurulacak -->
+                </div>
+                <button type="button" id="btnHizmetEkle" style="background-color: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-top: 10px; font-size: 14px;">+ Yeni Hizmet Ekle</button>
+                <small style="color: #666;">* Hizmet detayları (modal içeriği) şu an için sadece veritabanından düzenlenebilir veya geliştirilebilir.</small>
+            </div>
+
+            <!-- Bildirim Ayarları (LocalStorage) -->
+            <div class="settings-group">
+                <h3>🔔 Bildirim Ayarları</h3>
+                <div class="form-row">
+                    <div>
+                        <label>Bildirim Sesi</label>
+                        <div style="display: flex; gap: 10px;">
+                            <select id="bildirimSesi" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                                <option value="default">Varsayılan (Ding)</option>
+                                <option value="soft">Hafif (Su Damlası)</option>
+                                <option value="alert">Uyarı (Bip)</option>
+                                <option value="mute">Sessiz (Kapalı)</option>
+                            </select>
+                            <button type="button" id="btnSesTest" style="background-color: #6c757d; color: white; border: none; padding: 0 20px; border-radius: 5px; cursor: pointer;">🔊 Test</button>
+                        </div>
+                    </div>
+                </div>
+                <small style="color: #666;">* Bu ayar sadece kullandığınız bu tarayıcıda geçerlidir.</small>
+            </div>
+
+            <p style="font-size: 13px; color: #666; margin-bottom: 15px;"><span style="color:red">*</span> Zorunlu alanlar</p>
+            <button type="submit" class="btn-save">Ayarları Kaydet</button>
+        </form>
+    </main>
+
+    <!-- Çıkış Onay Modalı -->
+    <div id="cikisModal" class="modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <span class="close-modal" id="closeCikisModal">&times;</span>
+            <h3 style="color: #333; margin-bottom: 15px;">Çıkış Yapılıyor</h3>
+            <p>Oturumunuzu sonlandırmak istediğinize emin misiniz?</p>
+            <div style="margin-top: 25px; display: flex; justify-content: center; gap: 15px;">
+                <button class="btn-action" style="background-color: #6c757d; color: white; font-size: 14px; padding: 8px 20px;" id="btnCikisVazgec">Vazgeç</button>
+                <button class="btn-action" style="background-color: #dc3545; color: white; font-size: 14px; padding: 8px 20px;" id="btnCikisOnay">Çıkış Yap</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- İkon Seçim Modalı -->
+    <div id="iconModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <span class="close-modal" onclick="document.getElementById('iconModal').style.display='none'">&times;</span>
+            <h3 style="margin-bottom: 15px; color: var(--primary-color);">Bir İkon Seçin</h3>
+            <div id="iconGrid" class="icon-grid">
+                <!-- JS ile doldurulacak -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="admin-ayarlar.js"></script>
+</body>
+</html>

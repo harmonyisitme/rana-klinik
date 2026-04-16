@@ -1,0 +1,12 @@
+# Node.js bağımlılıkları
+node_modules/
+
+# Çevresel değişkenler (Şifreler içerdiği için gizli kalmalı)
+.env
+
+# Veritabanı ve Yüklenen Dosyalar (Sadece yerelde kalmalı)
+rana_klinik.sqlite
+frontend/uploads/
+
+# İşletim sistemi logları
+.DS_Store

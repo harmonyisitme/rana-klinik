@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rana İşitme Kliniği</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Preloader (Yükleme Ekranı) -->
+    <div id="preloader">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Toast Bildirim Alanı -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Yukarı Çık Butonu -->
+    <button id="scrollTopBtn" class="scroll-top-btn"><i class="fas fa-arrow-up"></i></button>
+
+    <!-- Top Bar (İletişim Şeridi) -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="contact-info">
+                <span id="headerTelefon"><i class="fas fa-phone-alt"></i> 0212 123 45 67</span>
+                <span id="headerEmail"><i class="fas fa-envelope"></i> info@ranaklinik.com</span>
+                <span id="headerAdres" class="hide-mobile"><i class="fas fa-map-marker-alt"></i> Kadıköy, İstanbul</span>
+            </div>
+            <div class="social-icons-top" id="headerSocials">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <header class="navbar">
+        <a href="#home" class="logo" style="text-decoration: none;">Rana<span>.</span></a>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="#home">Ana Sayfa</a></li>
+                <li><a href="hakkimizda.html">Hakkımızda</a></li>
+                <li><a href="#services">Hizmetler</a></li>
+                <li><a href="#blog">Blog</a></li>
+                <li><a href="iletisim.html">İletişim</a></li>
+                <li><a href="#randevu">Randevu Al</a></li>
+            </ul>
+        </nav>
+        <div class="hamburger">
+            <div class="line1"></div>
+            <div class="line2"></div>
+            <div class="line3"></div>
+        </div>
+        <a href="#randevu" class="btn-primary">Randevu Al</a>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>İşitmenizi Yeniden Keşfedin</h1>
+            <p>Modern teknoloji ve uzman odyologlarımızla, hayatın seslerini yeniden net ve pürüzsüz bir şekilde duymanız için yanınızdayız.</p>
+            <a href="#randevu" class="btn-large">Hemen Randevu Alın</a>
+        </div>
+    </section>
+
+    <section id="services" class="services">
+        <div class="section-title">
+            <h2>Hizmetlerimiz</h2>
+            <p>Size özel, modern ve dünya standartlarında işitme çözümleri sunuyoruz.</p>
+        </div>
+        <div class="services-animation-container" id="servicesContainer">
+            <div class="ear-symbol">
+                <svg width="350" height="350" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="overflow: visible;">
+                    <defs>
+                        <filter id="spark-glow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="1.5" result="coloredBlur"></feGaussianBlur>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"></feMergeNode>
+                                <feMergeNode in="SourceGraphic"></feMergeNode>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <path id="ear-path" d="M 45 25 C 75 10 95 30 90 65 C 88 85 70 95 50 90 C 35 85 35 60 50 55 C 65 50 70 65 60 70" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="0" cy="0" r="2" fill="var(--accent-color)" filter="url(#spark-glow)">
+                        <animateMotion dur="8s" repeatCount="indefinite" begin="3s">
+                            <mpath href="#ear-path"></mpath>
+                        </animateMotion>
+                    </circle>
+                </svg>
+            </div>
+            <!-- Statik kartlar - JS çalışmazsa veya yüklenmeden önce görünür -->
+            <div class="service-card" data-key="test"><div class="card-content"><div class="icon"><i class="fa-solid fa-ear-listen"></i></div><h3>İşitme Testleri</h3><p>Kapsamlı ve hassas işitme değerlendirmesi.</p></div></div>
+            <div class="service-card" data-key="cihaz"><div class="card-content"><div class="icon"><i class="fa-solid fa-ear-deaf"></i></div><h3>İşitme Cihazı</h3><p>Yaşam tarzınıza en uygun cihaz çözümleri.</p></div></div>
+            <div class="service-card" data-key="pediatrik"><div class="card-content"><div class="icon"><i class="fa-solid fa-baby"></i></div><h3>Pediatrik Odyoloji</h3><p>Bebekler ve çocuklar için özel testler.</p></div></div>
+            <div class="service-card" data-key="tinnitus"><div class="card-content"><div class="icon"><i class="fa-solid fa-bell"></i></div><h3>Tinnitus Tedavisi</h3><p>Kişiye özel ses terapileri ve danışmanlık.</p></div></div>
+        </div>
+    </section>
+
+    <section id="blog" class="blog-section">
+        <div class="section-title">
+            <h2>Güncel Sağlık Haberleri</h2>
+            <p>İşitme sağlığı hakkında uzmanlarımızdan tavsiyeler.</p>
+        </div>
+        <div class="blog-slider-wrapper">
+            <button class="slider-btn prev" id="prevBlogBtn"><i class="fas fa-chevron-left"></i></button>
+            <div class="blog-slider-track" id="blogKapsayici"></div>
+            <button class="slider-btn next" id="nextBlogBtn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <a href="#home" class="footer-logo" style="text-decoration: none;">Rana İşitme Kliniği<span>.</span></a>
+                <p>Modern teknoloji ve uzman kadromuzla işitme sağlığınız için güvenilir çözümler sunuyoruz. Hayatı tüm sesleriyle duymanız için yanınızdayız.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-col">
+                <h4>Hızlı Erişim</h4>
+                <ul>
+                    <li><a href="#home">Ana Sayfa</a></li>
+                    <li><a href="hakkimizda.html">Hakkımızda</a></li>
+                    <li><a href="#services">Hizmetler</a></li>
+                    <li><a href="#blog">Blog</a></li>
+                    <li><a href="#randevu">Randevu Al</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>İletişim</h4>
+                <ul id="footerIletisim">
+                    <li>📍 Bağdat Caddesi No: 123, Kadıköy / İstanbul</li>
+                    <li>📞 0212 123 45 67</li>
+                    <li>✉️ info@ranaklinik.com</li>
+                </ul>
+            </div>
+
+            <div class="footer-col" id="footerSaatler">
+                <h4>Çalışma Saatleri</h4>
+                <p>Pzt - Cuma: 09:00 - 18:00</p>
+                <p>Cumartesi: 10:00 - 14:00</p>
+                <p>Pazar: Kapalı</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-bottom-content">
+                <p>&copy; 2026 Rana İşitme Kliniği. Tüm hakları saklıdır.</p>
+                <div class="footer-links">
+                    <a href="#" onclick="yasalMetinGoster('gizlilik'); return false;">Gizlilik Politikası</a>
+                    <a href="#" onclick="yasalMetinGoster('sartlar'); return false;">Kullanım Şartları</a>
+                    <a href="#" onclick="yasalMetinGoster('kvkk'); return false;">KVKK Aydınlatma Metni</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Hizmet Detay Modalı -->
+    <div id="serviceModal" class="service-modal">
+        <div class="service-modal-content">
+            <span class="close-service-modal">&times;</span>
+            <h3 id="modalTitle">Hizmet Başlığı</h3>
+            <div id="modalBody">
+                <!-- İçerik JS ile gelecek -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Randevu Modalı -->
+    <div id="randevuModal" class="service-modal">
+        <div class="service-modal-content" style="max-width: 700px;">
+            <span id="closeRandevuModal" class="close-service-modal">&times;</span>
+            <div class="section-title" style="margin-bottom: 30px;">
+                <h2>Online Randevu Alın</h2>
+                <p>Hızlıca randevunuzu oluşturun, sizinle en kısa sürede iletişime geçelim.</p>
+            </div>
+
+            <!-- Adım 1: Seçim Ekranı -->
+            <div id="randevuStep1" class="step-content" style="text-align: center;">
+                <p style="margin-bottom: 25px; font-size: 16px;">Daha önce kliniğimize geldiniz mi?</p>
+                <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                    <button id="btnIlkRandevu" class="btn-large" style="background-color: var(--primary-color); min-width: 200px;">İlk Kez Randevu Alıyorum</button>
+                    <button id="btnKayitliHasta" class="btn-large" style="background-color: var(--accent-color); min-width: 200px;">Daha Önce Randevu Aldım</button>
+                </div>
+            </div>
+
+            <!-- Adım 2: Kayıtlı Hasta Sorgulama -->
+            <div id="randevuStep2" class="step-content" style="display: none; text-align: center;">
+                <p style="margin-bottom: 15px;">Lütfen TC Kimlik numaranızı giriniz:</p>
+                <div class="input-group" style="max-width: 300px; margin: 0 auto 15px auto;">
+                    <input type="text" id="sorguTc" placeholder="TC Kimlik No" maxlength="11" style="text-align: center;">
+                </div>
+                <button id="btnSorgula" class="btn-primary">Sorgula ve Devam Et</button>
+                <p id="sorguHata" style="color: red; margin-top: 10px; display: none; font-weight: bold;"></p>
+                <p style="margin-top: 20px; font-size: 14px; cursor: pointer; color: #666; text-decoration: underline;" onclick="randevuAdimGec(1)">← Geri Dön</p>
+            </div>
+
+            <!-- Adım 3: Form (Mevcut Form) -->
+            <form id="randevuFormu" class="step-content" style="display: none;">
+                <!-- Gizli alan: Hasta ID -->
+                <input type="hidden" id="hastaId">
+                
+                <!-- Kişisel Bilgiler (Kayıtlı ise gizlenebilir) -->
+                <div id="kisiselBilgiler">
+                    <div class="input-group">
+                        <label>Adınız ve Soyadınız <span style="color:red">*</span></label>
+                        <input type="text" id="adSoyad" required placeholder="Örn: Ahmet Yılmaz">
+                    </div>
+                    <div class="input-group">
+                        <label>Telefon Numaranız <span style="color:red">*</span></label>
+                        <input type="tel" id="telefon" required placeholder="Örn: (555) 123 45 67">
+                    </div>
+                    <div class="input-group">
+                        <label>E-posta Adresi <span style="color:red">*</span></label>
+                        <input type="email" id="email" required placeholder="ornek@email.com">
+                    </div>
+                    <div class="input-group">
+                        <label>TC Kimlik No <span style="color:red">*</span></label>
+                        <input type="text" id="tcKimlik" required placeholder="11 Haneli TC Kimlik No" maxlength="11">
+                    </div>
+                    <div class="input-group">
+                        <label>Cinsiyet <span style="color:red">*</span></label>
+                        <select id="cinsiyet" required><option value="">Seçiniz</option><option value="Kadın">Kadın</option><option value="Erkek">Erkek</option></select>
+                    </div>
+                    <div class="input-group">
+                        <label>Doğum Tarihi <span style="color:red">*</span></label>
+                        <input type="date" id="dogumTarihi" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Hizmet Türü <span style="color:red">*</span></label>
+                    <select id="hizmetTuru" required>
+                        <option value="">Lütfen seçin...</option>
+                        <option value="İşitme Testi">İşitme Testi</option>
+                        <option value="İşitme Cihazı">İşitme Cihazı Uygulaması</option>
+                        <option value="Çocuk Odyolojisi">Çocuk Odyolojisi</option>
+                        <option value="Tinnitus Tedavisi">Tinnitus Tedavisi</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Randevu Tarihi <span style="color:red">*</span></label>
+                    <input type="date" id="tarih" required>
+                </div>
+                <div class="input-group full-width"><label>Mesajınız</label><textarea id="mesaj" rows="4"></textarea></div>
+                
+                <!-- Özel Matematik Captcha -->
+                <div class="input-group full-width" style="display: flex; flex-direction: column; align-items: center; gap: 5px; background: #f9f9f9; padding: 15px; border-radius: 8px;">
+                    <label id="captchaLabel" style="font-weight: bold; color: var(--primary-color); font-size: 16px;">Güvenlik Sorusu: ... <span style="color:red">*</span></label>
+                    <input type="number" id="captchaInput" placeholder="Sonucu buraya yazın" required style="width: 200px; text-align: center; font-size: 16px;">
+                </div>
+
+                <p style="grid-column: span 2; font-size: 13px; color: #666; margin-top: 5px;"><span style="color:red">*</span> Zorunlu alanlar</p>
+                <button type="submit" class="btn-large full-width">Randevu Talebini Gönder</button>
+                <p style="grid-column: span 2; text-align: center; margin-top: 10px; font-size: 13px; cursor: pointer; color: #666; text-decoration: underline;" onclick="randevuAdimGec(1)">← Başlangıca Dön</p>
+            </form>
+            <div id="formMesaj" style="margin-top: 15px; text-align: center;"></div>
+        </div>
+    </div>
+
+    <!-- Blog Detay Modalı -->
+    <div id="blogModal" class="service-modal">
+        <div class="service-modal-content" style="max-width: 800px;">
+            <span id="closeBlogModal" class="close-service-modal">&times;</span>
+            <img id="blogModalImage" src="" alt="" style="width: 100%; height: 300px; object-fit: cover; border-radius: 10px; margin-bottom: 20px;">
+            <h3 id="blogModalTitle">Blog Başlığı</h3>
+            <div id="blogModalMeta" style="font-size: 13px; color: #888; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+                <!-- Meta info JS ile gelecek -->
+            </div>
+            <div id="blogModalBody" style="line-height: 1.7;">
+                <!-- İçerik JS ile gelecek -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Yasal Metin Modalı -->
+    <div id="yasalModal" class="service-modal">
+        <div class="service-modal-content" style="max-width: 800px;">
+            <span id="closeYasalModal" class="close-service-modal">&times;</span>
+            <h3 id="yasalModalTitle" style="margin-bottom: 20px; color: var(--primary-color);">Başlık</h3>
+            <div id="yasalModalBody" style="line-height: 1.7; white-space: pre-wrap;">
+                <!-- İçerik JS ile gelecek -->
+            </div>
+            <div style="text-align: right; margin-top: 20px;">
+                <button onclick="document.getElementById('yasalModal').style.display='none'" class="btn-primary" style="padding: 8px 20px; font-size: 14px;">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script type="module" src="app.js"></script>
+
+</body>
+</html>

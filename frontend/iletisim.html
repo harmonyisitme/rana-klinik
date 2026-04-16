@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İletişim | Rana İşitme Kliniği</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .contact-page-section { padding: 120px 50px 80px 50px; max-width: 1200px; margin: 0 auto; }
+        .contact-grid { max-width: 800px; margin: 0 auto 50px auto; }
+        
+        .contact-info-box { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .info-item { display: flex; align-items: flex-start; margin-bottom: 25px; }
+        .info-item i { font-size: 24px; color: var(--primary-color); margin-right: 15px; margin-top: 5px; }
+        .info-item h4 { font-size: 18px; margin-bottom: 5px; color: #333; }
+        .info-item p { color: #666; font-size: 15px; }
+
+        .map-container { margin-top: 50px; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.1); height: 400px; }
+        .map-container iframe { width: 100%; height: 100%; border: 0; }
+
+        @media (max-width: 768px) {
+            .contact-page-section { padding: 50px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="contact-info">
+                <span id="headerTelefon"><i class="fas fa-phone-alt"></i> 0212 123 45 67</span>
+                <span id="headerEmail"><i class="fas fa-envelope"></i> info@ranaklinik.com</span>
+                <span id="headerAdres" class="hide-mobile"><i class="fas fa-map-marker-alt"></i> Kadıköy, İstanbul</span>
+            </div>
+            <div class="social-icons-top" id="headerSocials">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Bildirim Alanı -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <header class="navbar">
+        <a href="index.html" class="logo" style="text-decoration: none;">Rana<span>.</span></a>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html">Ana Sayfa</a></li>
+                <li><a href="hakkimizda.html">Hakkımızda</a></li>
+                <li><a href="index.html#services">Hizmetler</a></li>
+                <li><a href="index.html#blog">Blog</a></li>
+                <li><a href="iletisim.html" style="color: var(--primary-color);">İletişim</a></li>
+                <li><a href="index.html#randevu">Randevu Al</a></li>
+            </ul>
+        </nav>
+        <div class="hamburger">
+            <div class="line1"></div>
+            <div class="line2"></div>
+            <div class="line3"></div>
+        </div>
+        <a href="index.html#randevu" class="btn-primary">Randevu Al</a>
+    </header>
+
+    <section class="contact-page-section">
+        <div class="section-title">
+            <h2>Bize Ulaşın</h2>
+            <p>Sorularınız, görüşleriniz veya randevu talepleriniz için bizimle iletişime geçin.</p>
+        </div>
+
+        <div class="contact-grid">
+            <!-- İletişim Bilgileri -->
+            <div class="contact-info-box">
+                <div class="info-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <h4>Adresimiz</h4>
+                        <p id="pageAdres">Yükleniyor...</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-phone-alt"></i>
+                    <div>
+                        <h4>Telefon</h4>
+                        <p id="pageTelefon">Yükleniyor...</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-envelope"></i>
+                    <div>
+                        <h4>E-posta</h4>
+                        <p id="pageEmail">Yükleniyor...</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-clock"></i>
+                    <div>
+                        <h4>Çalışma Saatleri</h4>
+                        <p id="pageSaatler">Yükleniyor...</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Google Harita -->
+        <div class="map-container">
+            <iframe id="googleMapFrame" src="" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <a href="index.html" class="footer-logo" style="text-decoration: none;">Rana<span>.</span></a>
+                <p>Modern teknoloji ve uzman kadromuzla işitme sağlığınız için güvenilir çözümler sunuyoruz.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Hızlı Erişim</h4>
+                <ul>
+                    <li><a href="index.html">Ana Sayfa</a></li>
+                    <li><a href="hakkimizda.html">Hakkımızda</a></li>
+                    <li><a href="iletisim.html">İletişim</a></li>
+                    <li><a href="index.html#blog">Blog</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>İletişim</h4>
+                <ul id="footerIletisim"></ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Rana İşitme Kliniği. Tüm hakları saklıdır.</p>
+        </div>
+    </footer>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>

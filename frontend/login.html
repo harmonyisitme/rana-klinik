@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yönetici Girişi | Rana Klinik</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Sadece giriş ekranına özel ortalama ayarı */
+        body { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            background: linear-gradient(135deg, #0f3460 0%, #533483 100%);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+        }
+        .login-box { 
+            background: rgba(255, 255, 255, 0.95); 
+            padding: 50px 40px; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3); 
+            width: 100%; max-width: 400px; text-align: center; 
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+        .login-box:hover { transform: translateY(-5px); }
+        .login-box h2 { 
+            color: #0f3460; 
+            margin-bottom: 10px; 
+            font-weight: 700; 
+            font-size: 28px; 
+        }
+        .login-box p { color: #666; margin-bottom: 30px; font-size: 14px; }
+        
+        .input-group { position: relative; margin-bottom: 20px; }
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            transition: color 0.3s;
+        }
+        .login-box input { 
+            width: 100%; 
+            padding: 15px 15px 15px 45px; 
+            border: 2px solid #eee; 
+            border-radius: 10px; 
+            font-size: 15px; 
+            transition: all 0.3s;
+            background: #f9f9f9;
+            box-sizing: border-box;
+        }
+        .login-box input:focus { 
+            border-color: #0f3460; 
+            background: white; 
+            outline: none; 
+            box-shadow: 0 0 0 4px rgba(15, 52, 96, 0.1); 
+        }
+        .login-box input:focus + i { color: #0f3460; }
+        
+        .error-msg { 
+            background: #ffebee; 
+            color: #c62828; 
+            padding: 10px; 
+            border-radius: 8px; 
+            margin-bottom: 20px; 
+            font-size: 14px; 
+            display: none; 
+            border: 1px solid #ffcdd2; 
+        }
+        
+        .btn-primary { 
+            width: 100%; 
+            padding: 15px; 
+            font-size: 16px; 
+            margin-top: 10px; 
+            background: linear-gradient(to right, #0f3460, #16213e); 
+            border: none; 
+            color: white; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            transition: all 0.3s; 
+            box-shadow: 0 5px 15px rgba(15, 52, 96, 0.3); 
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15, 52, 96, 0.4); }
+        .btn-primary:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+        
+        .back-link { display: inline-block; margin-top: 20px; color: #666; text-decoration: none; font-size: 14px; transition: color 0.3s; }
+        .back-link:hover { color: #0f3460; }
+    </style>
+</head>
+<body>
+
+    <div class="login-box">
+        <h2>Rana Admin</h2>
+        <p>Yönetim paneline erişmek için giriş yapın.</p>
+        <form id="loginForm">
+            <div id="hataMesaji" class="error-msg">Kullanıcı adı veya şifre hatalı!</div>
+            <div class="input-group">
+                <input type="text" id="kullanici" placeholder="Kullanıcı Adı" required>
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="input-group">
+                <input type="password" id="sifre" placeholder="Şifre" required>
+                <i class="fas fa-lock"></i>
+            </div>
+            <button type="submit" class="btn-primary" id="loginBtn">Giriş Yap</button>
+        </form>
+        <a href="index.html" class="back-link">← Siteye Dön</a>
+    </div>
+
+    <script src="login.js"></script>
+</body>
+</html>

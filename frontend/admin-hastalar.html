@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hastalar | Rana Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+    <style>
+    </style>
+</head>
+<body>
+
+    <!-- Toast Bildirim Alanı -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <header class="admin-header">
+        <a href="admin.html" class="logo" style="text-decoration: none; color: white;">Rana <span>Admin</span></a>
+        <div class="header-right">
+            <button class="btn-notification" id="darkModeBtn" title="Karanlık Mod">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="btn-notification" onclick="showToast('Sistem bildirimleri aktif.', 'info')" title="Bildirimler">
+                <i class="fas fa-bell"></i>
+            </button>
+            <a href="index.html" class="btn-site">Siteye Dön</a>
+            <button id="btnLogout" class="btn-logout">Çıkış Yap</button>
+        </div>
+    </header>
+
+    <main class="admin-container">
+        <!-- Modül Kartları (Hızlı Erişim) -->
+        <div class="admin-modules">
+            <a href="admin.html" class="module-card">
+                <div class="icon">📅</div>
+                <h3>Randevu Listesi</h3>
+                <p>Randevu taleplerini yönetin.</p>
+            </a>
+            <a href="admin-takvim.html" class="module-card">
+                <div class="icon">🗓️</div>
+                <h3>Takvim Görünümü</h3>
+                <p>Randevuları takvimde görün.</p>
+            </a>
+            <a href="admin-hastalar.html" class="module-card active">
+                <div class="icon">👥</div>
+                <h3>Hastalar</h3>
+                <p>Kayıtlı hastaları görüntüleyin.</p>
+            </a>
+            <a href="admin-blog.html" class="module-card">
+                <div class="icon">✍️</div>
+                <h3>Blog Yönetimi</h3>
+                <p>Blog yazılarını düzenleyin.</p>
+            </a>
+            <a href="admin-ayarlar.html" class="module-card">
+                <div class="icon">⚙️</div>
+                <h3>Site Ayarları</h3>
+                <p>İletişim ve hizmetleri güncelleyin.</p>
+            </a>
+        </div>
+
+        <div class="header-action">
+            <h2>Kayıtlı Hastalar</h2>
+            <input type="text" id="hastaArama" placeholder="Ad, TC veya Telefon ile ara..." style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 300px; margin-right: 10px;">
+            <button class="btn-refresh" style="background-color: #28a745; margin-right: 5px;" onclick="excelDisaAktar()">📊 Excel İndir</button>
+            <button class="btn-refresh" onclick="hastalariGetir()">🔄 Yenile</button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ad Soyad</th>
+                        <th>TC Kimlik</th>
+                        <th>Telefon</th>
+                        <th>E-posta</th>
+                        <th>Cinsiyet</th>
+                        <th>Doğum Tarihi</th>
+                        <th>Kayıt Tarihi</th>
+                        <th>Son Randevu</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody id="hastaListesi">
+                    <tr>
+                        <td colspan="9" class="loading-text">Yükleniyor...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Hasta Randevu Geçmişi Modalı -->
+    <div id="hastaGecmisModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3 style="margin-bottom: 20px; color: var(--primary-color);">Randevu Geçmişi: <span id="modalHastaAdi"></span></h3>
+            <div class="table-container" style="max-height: 400px; overflow-y: auto; box-shadow: none; border: 1px solid #eee;">
+                <table style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Hizmet</th>
+                            <th>Durum</th>
+                            <th>Mesaj</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hastaRandevuListesi">
+                        <!-- JS ile doldurulacak -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hasta Düzenleme Modalı -->
+    <div id="hastaDuzenleModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeDuzenleModal">&times;</span>
+            <h3 style="margin-bottom: 20px; color: var(--primary-color);">Hasta Bilgilerini Düzenle</h3>
+            <form id="hastaDuzenleForm">
+                <input type="hidden" id="editHastaId">
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom:5px; font-weight:600;">Ad Soyad <span style="color:red">*</span></label>
+                    <input type="text" id="editAdSoyad" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom:5px; font-weight:600;">TC Kimlik <span style="color:red">*</span></label>
+                    <input type="text" id="editTcKimlik" required maxlength="11" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom:5px; font-weight:600;">Telefon <span style="color:red">*</span></label>
+                    <input type="text" id="editTelefon" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom:5px; font-weight:600;">E-posta <span style="color:red">*</span></label>
+                    <input type="email" id="editEmail" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom:5px; font-weight:600;">Cinsiyet</label>
+                    <select id="editCinsiyet" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+                        <option value="">Seçiniz</option>
+                        <option value="Kadın">Kadın</option>
+                        <option value="Erkek">Erkek</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom:5px; font-weight:600;">Doğum Tarihi</label>
+                    <input type="date" id="editDogumTarihi" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+                </div>
+                <p style="font-size: 12px; color: #666; margin-bottom: 10px;"><span style="color:red">*</span> Zorunlu alanlar</p>
+                <button type="submit" class="btn-refresh" style="width: 100%; margin-top: 10px;">Güncelle</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Çıkış Onay Modalı -->
+    <div id="cikisModal" class="modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <span class="close-modal" id="closeCikisModal">&times;</span>
+            <h3 style="color: #333; margin-bottom: 15px;">Çıkış Yapılıyor</h3>
+            <p>Oturumunuzu sonlandırmak istediğinize emin misiniz?</p>
+            <div style="margin-top: 25px; display: flex; justify-content: center; gap: 15px;">
+                <button class="btn-action" style="background-color: #6c757d; color: white; font-size: 14px; padding: 8px 20px;" id="btnCikisVazgec">Vazgeç</button>
+                <button class="btn-action" style="background-color: #dc3545; color: white; font-size: 14px; padding: 8px 20px;" id="btnCikisOnay">Çıkış Yap</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Excel Kütüphanesi -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <script type="module" src="admin-hastalar.js"></script>
+</body>
+</html>

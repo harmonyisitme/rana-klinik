@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medya Kütüphanesi | Rana Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+    <style>
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .media-item {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+            border: 1px solid #eee;
+        }
+        .media-item:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .media-img-container {
+            height: 150px;
+            width: 100%;
+            background-color: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .media-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .media-actions {
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            background: #fff;
+            border-top: 1px solid #eee;
+        }
+        .btn-media {
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .btn-media:hover { background-color: #f0f0f0; }
+        .btn-copy { color: #0056b3; }
+        .btn-delete { color: #dc3545; }
+    </style>
+</head>
+<body>
+
+    <!-- Toast Bildirim Alanı -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <header class="admin-header">
+        <a href="admin.html" class="logo" style="text-decoration: none; color: white;">Rana <span>Admin</span></a>
+        <div class="header-right">
+            <button class="btn-notification" onclick="showToast('Sistem bildirimleri aktif.', 'info')" title="Bildirimler">
+                <i class="fas fa-bell"></i>
+            </button>
+            <a href="index.html" class="btn-site">Siteye Dön</a>
+            <button id="btnLogout" class="btn-logout">Çıkış Yap</button>
+        </div>
+    </header>
+
+    <main class="admin-container">
+        <!-- Modül Kartları -->
+        <div class="admin-modules">
+            <a href="admin.html" class="module-card">
+                <div class="icon">📅</div>
+                <h3>Randevu Listesi</h3>
+            </a>
+            <a href="admin-takvim.html" class="module-card">
+                <div class="icon">🗓️</div>
+                <h3>Takvim</h3>
+            </a>
+            <a href="admin-hastalar.html" class="module-card">
+                <div class="icon">👥</div>
+                <h3>Hastalar</h3>
+            </a>
+            <a href="admin-blog.html" class="module-card">
+                <div class="icon">✍️</div>
+                <h3>Blog</h3>
+            </a>
+            <a href="admin-medya.html" class="module-card active">
+                <div class="icon">🖼️</div>
+                <h3>Medya</h3>
+            </a>
+        </div>
+
+        <h2>Yüklenen Görseller</h2>
+        <div id="mediaGrid" class="media-grid"></div>
+    </main>
+
+    <!-- Çıkış Onay Modalı -->
+    <div id="cikisModal" class="modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <span class="close-modal" id="closeCikisModal">&times;</span>
+            <h3 style="color: #333; margin-bottom: 15px;">Çıkış Yapılıyor</h3>
+            <p>Oturumunuzu sonlandırmak istediğinize emin misiniz?</p>
+            <div style="margin-top: 25px; display: flex; justify-content: center; gap: 15px;">
+                <button class="btn-action" style="background-color: #6c757d; color: white; font-size: 14px; padding: 8px 20px;" id="btnCikisVazgec">Vazgeç</button>
+                <button class="btn-action" style="background-color: #dc3545; color: white; font-size: 14px; padding: 8px 20px;" id="btnCikisOnay">Çıkış Yap</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="admin-medya.js"></script>
+</body>
+</html>
