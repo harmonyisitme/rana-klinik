@@ -1,701 +1,194 @@
-import { API_URL, showToast } from './utils.js';
-
-document.addEventListener('DOMContentLoaded', () => {
-    
-    // API_URL artık utils.js'den geliyor
-
-    // --- INPUT FORMATLAMA (Telefon ve TC) ---
-    function formatla(deger, tur) {
-        if (!deger) return '';
-        deger = deger.toString().replace(/\D/g, ''); // Sadece rakamları al
-        
-        if (tur === 'telefon') {
-            if (deger.startsWith('0')) deger = deger.substring(1);
-            if (deger.length > 10) deger = deger.substring(0, 10);
-            
-            let formatli = '';
-            if (deger.length > 0) formatli = '(' + deger.substring(0, 3);
-            if (deger.length >= 4) formatli += ') ' + deger.substring(3, 6);
-            if (deger.length >= 7) formatli += ' ' + deger.substring(6, 8);
-            if (deger.length >= 9) formatli += ' ' + deger.substring(8, 10);
-            return formatli;
-        } else {
-            // TC
-            if (deger.startsWith('0')) deger = deger.substring(1);
-            if (deger.length > 11) deger = deger.substring(0, 11);
-            return deger;
-        }
-    }
-
-    function inputFormatla(inputId, tur) {
-        const input = document.getElementById(inputId);
-        if (!input) return;
-
-        input.addEventListener('input', (e) => {
-            e.target.value = formatla(e.target.value, tur);
-        });
-    }
-
-    // Formatlanacak alanları tanımla
-    inputFormatla('telefon', 'telefon');
-    inputFormatla('sorguTc', 'tc');
-    inputFormatla('tcKimlik', 'tc');
-
-    // --- TARİH KISITLAMASI (GEÇMİŞ TARİH SEÇİMİNİ ENGELLE) ---
-    let doluGunler = [];
-    const tarihInput = document.getElementById('tarih');
-    
-    if (tarihInput) {
-        const today = new Date();
-        const yyyy = today.getFullYear();
-        const mm = String(today.getMonth() + 1).padStart(2, '0');
-        const dd = String(today.getDate()).padStart(2, '0');
-        tarihInput.min = `${yyyy}-${mm}-${dd}`;
-
-        // Dolu günleri çek
-        fetch(`${API_URL}/randevular/dolu-gunler`)
-            .then(res => res.json())
-            .then(data => {
-                doluGunler = data;
-            })
-            .catch(err => console.error('Dolu günler alınamadı:', err));
-
-        // Tarih değiştiğinde kontrol et
-        tarihInput.addEventListener('change', (e) => {
-            const secilenTarih = e.target.value;
-            if (doluGunler.includes(secilenTarih)) {
-                showToast('Seçtiğiniz tarih tamamen doludur. Lütfen başka bir tarih seçiniz.', 'error');
-                e.target.value = ''; // Seçimi temizle
-            }
-            // Hafta sonu kontrolü (İsteğe bağlı, Pazar günü engelleme)
-            const day = new Date(secilenTarih).getDay();
-            if (day === 0) { // 0 = Pazar
-                showToast('Pazar günleri kliniğimiz kapalıdır.', 'error');
-                e.target.value = '';
-            }
-        });
-    }
-
-    // --- TC KİMLİK DOĞRULAMA ALGORİTMASI ---
-    function tcKimlikDogrula(tcno) {
-        if (!tcno || tcno.length !== 11) return false;
-        if (tcno[0] === '0') return false; // 0 ile başlayamaz
-
-        let tekler = 0, ciftler = 0, toplam = 0;
-        
-        for (let i = 0; i < 9; i++) {
-            let rakam = parseInt(tcno[i]);
-            if (i % 2 === 0) tekler += rakam; // 1, 3, 5, 7, 9. haneler (indis 0, 2, 4, 6, 8)
-            else ciftler += rakam;            // 2, 4, 6, 8. haneler (indis 1, 3, 5, 7)
-            toplam += rakam;
-        }
-
-        let hane10 = ((tekler * 7) - ciftler) % 10;
-        let hane11 = (toplam + hane10) % 10;
-
-        if (hane10 !== parseInt(tcno[9])) return false;
-        if (hane11 !== parseInt(tcno[10])) return false;
-
-        return true;
-    }
-
-    // --- E-POSTA DOĞRULAMA ---
-    function emailDogrula(email) {
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return regex.test(email);
-    }
-
-    // --- 0. SİTE AYARLARINI ÇEK VE YERLEŞTİR ---
-    let dynamicServiceDetails = {}; // Modal için dinamik veri
-    let yasalMetinlerData = {}; // Yasal metinleri saklamak için
-
-    async function siteAyarlariniGetir() {
-        try {
-            // Önbellek sorununu önlemek için timestamp ekliyoruz
-            const response = await fetch(`${API_URL}/site-ayarlari?_t=${Date.now()}`);
-            if (!response.ok) return;
-            const ayarlar = await response.json();
-
-            // Yasal metinleri sakla
-            yasalMetinlerData = ayarlar.yasalMetinler || {};
-
-            // 0. Logo Ayarı
-            const logoSrc = (ayarlar.logo && ayarlar.logo.trim() !== '') ? ayarlar.logo : '/logo.png';
-            const logoElements = document.querySelectorAll('.logo, .footer-logo');
-            logoElements.forEach(el => {
-                el.innerHTML = `<img src="${logoSrc}" alt="Rana Klinik" style="height: 60px; vertical-align: middle;">`;
-            });
-
-            // 0.0 Favicon Ayarı
-            if (ayarlar.favicon && ayarlar.favicon.trim() !== '') {
-                let link = document.querySelector("link[rel~='icon']");
-                if (!link) {
-                    link = document.createElement('link');
-                    link.rel = 'icon';
-                    document.getElementsByTagName('head')[0].appendChild(link);
-                }
-                link.href = ayarlar.favicon;
-            }
-
-            // 0.1 Hero Görseli
-            if (ayarlar.heroGorsel && ayarlar.heroGorsel.trim() !== '') {
-                const heroSection = document.querySelector('.hero');
-                if (heroSection) {
-                    heroSection.style.background = `linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)), url('${ayarlar.heroGorsel}') center/cover`;
-                }
-            }
-
-            // 0.1.1 Ana Renk Ayarı
-            if (ayarlar.anaRenk) {
-                document.documentElement.style.setProperty('--primary-color', ayarlar.anaRenk);
-            }
-
-            // 0.1.2 İkincil Renk Ayarı
-            if (ayarlar.ikincilRenk) {
-                document.documentElement.style.setProperty('--accent-color', ayarlar.ikincilRenk);
-            }
-
-            // 0.2 Hakkımızda Sayfası (Eğer o sayfadaysak)
-            const aboutTitle = document.getElementById('aboutTitle');
-            const aboutContent = document.getElementById('aboutContent');
-            const aboutImage = document.getElementById('aboutImage');
-            
-            if (aboutTitle && ayarlar.hakkimizda) {
-                aboutTitle.textContent = ayarlar.hakkimizda.baslik;
-                aboutContent.innerHTML = ayarlar.hakkimizda.icerik.replace(/\n/g, '<br>');
-                if (aboutImage && ayarlar.hakkimizda.gorsel) aboutImage.src = ayarlar.hakkimizda.gorsel;
-            }
-
-            // 0.3 Header (Top Bar) Bilgileri
-            const headerTelefon = document.getElementById('headerTelefon');
-            const headerEmail = document.getElementById('headerEmail');
-            const headerAdres = document.getElementById('headerAdres');
-            
-            if (headerTelefon) headerTelefon.innerHTML = `<a href="tel:${ayarlar.iletisim.telefon}" style="color: inherit; text-decoration: none;"><i class="fas fa-phone-alt"></i> ${ayarlar.iletisim.telefon}</a>`;
-            if (headerEmail) headerEmail.innerHTML = `<a href="mailto:${ayarlar.iletisim.email}" style="color: inherit; text-decoration: none;"><i class="fas fa-envelope"></i> ${ayarlar.iletisim.email}</a>`;
-            if (headerAdres) headerAdres.innerHTML = `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ayarlar.iletisim.adres)}" target="_blank" style="color: inherit; text-decoration: none;"><i class="fas fa-map-marker-alt"></i> ${ayarlar.iletisim.adres}</a>`;
-
-            // 0.4 İletişim Sayfası Verileri
-            const pageAdres = document.getElementById('pageAdres');
-            const pageTelefon = document.getElementById('pageTelefon');
-            const pageEmail = document.getElementById('pageEmail');
-            const pageSaatler = document.getElementById('pageSaatler');
-            const googleMapFrame = document.getElementById('googleMapFrame');
-
-            if (pageAdres) {
-                pageAdres.innerText = ayarlar.iletisim.adres;
-                pageTelefon.innerHTML = `<a href="tel:${ayarlar.iletisim.telefon}" style="color: inherit;">${ayarlar.iletisim.telefon}</a>`;
-                pageEmail.innerHTML = `<a href="mailto:${ayarlar.iletisim.email}" style="color: inherit;">${ayarlar.iletisim.email}</a>`;
-                pageSaatler.innerHTML = `Hafta İçi: ${ayarlar.calismaSaatleri.haftaici}<br>Cumartesi: ${ayarlar.calismaSaatleri.cumartesi}<br>Pazar: ${ayarlar.calismaSaatleri.pazar}`;
-                
-                // Harita
-                if (googleMapFrame && ayarlar.haritaEmbed) {
-                    let embedUrl = ayarlar.haritaEmbed;
-                    if (embedUrl.includes('<iframe')) {
-                        const match = embedUrl.match(/src=["']([^"']+)["']/);
-                        if (match) embedUrl = match[1];
-                    }
-                    googleMapFrame.src = embedUrl;
-                }
-            }
-
-            // 1. Footer Bilgileri
-            const footerIletisim = document.getElementById('footerIletisim');
-            if (footerIletisim) {
-                footerIletisim.innerHTML = `
-                    <li><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ayarlar.iletisim.adres)}" target="_blank">📍 ${ayarlar.iletisim.adres}</a></li>
-                    <li><a href="tel:${ayarlar.iletisim.telefon}">📞 ${ayarlar.iletisim.telefon}</a></li>
-                    <li><a href="mailto:${ayarlar.iletisim.email}">✉️ ${ayarlar.iletisim.email}</a></li>
-                `;
-            }
-            const footerSaatler = document.getElementById('footerSaatler');
-            if (footerSaatler) {
-                footerSaatler.innerHTML = `
-                    <h4>Çalışma Saatleri</h4>
-                    <p>Pzt - Cuma: ${ayarlar.calismaSaatleri.haftaici}</p>
-                    <p>Cumartesi: ${ayarlar.calismaSaatleri.cumartesi}</p>
-                    <p>Pazar: ${ayarlar.calismaSaatleri.pazar}</p>
-                `;
-            }
-
-            // 1.5 Sosyal Medya Linkleri
-            const socialLinks = document.querySelector('.social-links');
-            if (socialLinks && ayarlar.sosyalMedya) {
-                const sm = ayarlar.sosyalMedya;
-                let html = '';
-                if (sm.facebook && sm.facebook !== '#') html += `<a href="${sm.facebook}" target="_blank"><i class="fab fa-facebook-f"></i></a>`;
-                if (sm.twitter && sm.twitter !== '#') html += `<a href="${sm.twitter}" target="_blank"><i class="fab fa-twitter"></i></a>`;
-                if (sm.instagram && sm.instagram !== '#') html += `<a href="${sm.instagram}" target="_blank"><i class="fab fa-instagram"></i></a>`;
-                if (sm.linkedin && sm.linkedin !== '#') html += `<a href="${sm.linkedin}" target="_blank"><i class="fab fa-linkedin-in"></i></a>`;
-                socialLinks.innerHTML = html;
-            }
-
-            // 1.6 Header Sosyal Medya Linkleri
-            const headerSocials = document.getElementById('headerSocials');
-            if (headerSocials && ayarlar.sosyalMedya) {
-                const sm = ayarlar.sosyalMedya;
-                let html = '';
-                if (sm.facebook && sm.facebook !== '#') html += `<a href="${sm.facebook}" target="_blank"><i class="fab fa-facebook-f"></i></a>`;
-                if (sm.twitter && sm.twitter !== '#') html += `<a href="${sm.twitter}" target="_blank"><i class="fab fa-twitter"></i></a>`;
-                if (sm.instagram && sm.instagram !== '#') html += `<a href="${sm.instagram}" target="_blank"><i class="fab fa-instagram"></i></a>`;
-                if (sm.linkedin && sm.linkedin !== '#') html += `<a href="${sm.linkedin}" target="_blank"><i class="fab fa-linkedin-in"></i></a>`;
-                headerSocials.innerHTML = html;
-            }
-
-            // 2. Hizmetler Bölümü
-            const servicesContainer = document.getElementById('servicesContainer');
-            if (servicesContainer && ayarlar.hizmetler.length > 0) {
-                const existingCards = servicesContainer.querySelectorAll('.service-card');
-                existingCards.forEach(card => card.remove());
-                
-                ayarlar.hizmetler.forEach((hizmet, index) => {
-                    dynamicServiceDetails[hizmet.key] = {
-                        title: hizmet.baslik,
-                        content: hizmet.detay
-                    };
-
-                    const card = document.createElement('div');
-                    card.className = 'service-card';
-                    card.setAttribute('data-key', hizmet.key);
-                    card.style.setProperty('--delay', `${index * 0.15}s`);
-
-                    card.innerHTML = `
-                        <div class="card-content">
-                            <div class="icon"><i class="${hizmet.ikon}"></i></div>
-                            <h3>${hizmet.baslik}</h3>
-                            <p>${hizmet.ozet}</p>
-                        </div>
-                    `;
-                    servicesContainer.appendChild(card);
-                });
-
-                setTimeout(() => {
-                    servicesContainer.classList.add('loaded');
-                    const allCards = servicesContainer.querySelectorAll('.service-card');
-                    const angleStep = 360 / allCards.length;
-                    const radius = 320;
-
-                    allCards.forEach((card, index) => {
-                        const angle = index * angleStep;
-                        card.style.transform = `rotate(${angle}deg) translateX(${radius}px) rotate(-${angle}deg)`;
-                    });
-                }, 100);
-
-                attachServiceClickEvents();
-            }
-
-            // 3. Randevu Formu Hizmet Seçenekleri
-            const hizmetSelect = document.getElementById('hizmetTuru');
-            if (hizmetSelect && ayarlar.hizmetler.length > 0) {
-                hizmetSelect.innerHTML = '<option value="">Lütfen seçin...</option>';
-                ayarlar.hizmetler.forEach(hizmet => {
-                    const option = document.createElement('option');
-                    option.value = hizmet.baslik;
-                    option.textContent = hizmet.baslik;
-                    hizmetSelect.appendChild(option);
-                });
-            }
-
-        } catch (error) {
-            console.error('Site ayarları yüklenemedi:', error);
-        }
-    }
-
-    siteAyarlariniGetir();
-
-    // --- 1. BLOG YAZILARINI VERİTABANINDAN ÇEKME ---
-    const blogKapsayici = document.getElementById('blogKapsayici');
-    let allBlogs = [];
-
-    async function bloglariGetir() {
-        if (!blogKapsayici) return;
-
-        try {
-            const response = await fetch(`${API_URL}/blog?_t=${Date.now()}`);
-            if (!response.ok) {
-                throw new Error(`Sunucu Hatası: ${response.status}`);
-            }
-
-            const sonuc = await response.json();
-            const bloglar = sonuc.veri;
-            allBlogs = bloglar;
-
-            blogKapsayici.innerHTML = '';
-
-            if (!bloglar || bloglar.length === 0) {
-                blogKapsayici.innerHTML = '<p style="text-align: center; width: 100%;">Henüz paylaşılmış bir blog yazısı bulunamadı.</p>';
-                return;
-            }
-
-            bloglar.forEach(yazi => {
-                const kart = document.createElement('div');
-                kart.className = 'blog-card';
-                kart.addEventListener('click', () => openBlogModal(yazi.id));
-
-                kart.innerHTML = `
-                    <img src="${yazi.gorselUrl || 'https://via.placeholder.com/400x200'}" class="blog-img" alt="${yazi.baslik}">
-                    <div class="blog-body">
-                        <h3>${yazi.baslik}</h3>
-                        <p>${yazi.icerik.substring(0, 120)}...</p>
-                        <div class="blog-footer">
-                            <span>✍️ ${yazi.yazar}</span>
-                            <span>📅 ${new Date(yazi.createdAt).toLocaleDateString('tr-TR')}</span>
-                        </div>
-                    </div>
-                `;
-                blogKapsayici.appendChild(kart);
-            });
-
-        } catch (error) {
-            console.error('Blog Getirme Hatası:', error);
-            blogKapsayici.innerHTML = `
-                <div style="text-align: center; width: 100%; color: #721c24; background: #f8d7da; padding: 20px; border-radius: 8px;">
-                    <p><strong>Bloglar şu an yüklenemiyor.</strong></p>
-                    <small>Hata Detayı: Sunucuya ulaşılamadı.</small>
-                </div>`;
-        }
-    }
-
-    bloglariGetir();
-
-    // --- 1.1 BLOG SLIDER KONTROLLERİ ---
-    const prevBtn = document.getElementById('prevBlogBtn');
-    const nextBtn = document.getElementById('nextBlogBtn');
-
-    if (prevBtn && nextBtn && blogKapsayici) {
-        prevBtn.addEventListener('click', () => {
-            blogKapsayici.scrollBy({ left: -320, behavior: 'smooth' });
-        });
-
-        nextBtn.addEventListener('click', () => {
-            blogKapsayici.scrollBy({ left: 320, behavior: 'smooth' });
-        });
-    }
-
-    // --- 1.2 ÖZEL CAPTCHA MANTIĞI ---
-    let captchaDogruCevap = 0;
-
-    function captchaOlustur() {
-        const sayi1 = Math.floor(Math.random() * 10) + 1;
-        const sayi2 = Math.floor(Math.random() * 10) + 1;
-        captchaDogruCevap = sayi1 + sayi2;
-        
-        const label = document.getElementById('captchaLabel');
-        if (label) label.textContent = `Güvenlik Sorusu: ${sayi1} + ${sayi2} = ?`;
-        const input = document.getElementById('captchaInput');
-        if (input) input.value = '';
-    }
-
-    captchaOlustur();
-
-    // --- 2. RANDEVU FORMU GÖNDERME İŞLEMİ ---
-    const form = document.getElementById('randevuFormu');
-    const mesajKutusu = document.getElementById('formMesaj');
-
-    if (form) {
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const kullaniciCevabi = parseInt(document.getElementById('captchaInput').value);
-            if (kullaniciCevabi !== captchaDogruCevap) {
-                showToast('Güvenlik sorusu yanlış! Lütfen tekrar deneyin.', 'error');
-                captchaOlustur();
-                return;
-            }
-
-            const tcNo = document.getElementById('tcKimlik').value;
-            if (!tcKimlikDogrula(tcNo)) {
-                showToast('Geçersiz TC Kimlik Numarası! Lütfen kontrol ediniz.', 'error');
-                return;
-            }
-
-            const email = document.getElementById('email').value;
-            if (!emailDogrula(email)) {
-                showToast('Geçersiz E-posta Adresi! Lütfen kontrol ediniz.', 'error');
-                return;
-            }
-
-            const cinsiyet = document.getElementById('cinsiyet').value;
-            const dogumTarihi = document.getElementById('dogumTarihi').value;
-            if (!cinsiyet) {
-                showToast('Lütfen cinsiyetinizi seçin.', 'error');
-                return;
-            }
-            if (!dogumTarihi) {
-                showToast('Lütfen doğum tarihinizi girin.', 'error');
-                return;
-            }
-
-            const randevuVerisi = {
-                hastaId: document.getElementById('hastaId').value,
-                adSoyad: document.getElementById('adSoyad').value,
-                telefon: document.getElementById('telefon').value.replace(/\D/g, ''),
-                email: document.getElementById('email').value,
-                tcKimlik: document.getElementById('tcKimlik').value,
-                cinsiyet: document.getElementById('cinsiyet').value,
-                dogumTarihi: document.getElementById('dogumTarihi').value,
-                hizmetTuru: document.getElementById('hizmetTuru').value,
-                tarih: document.getElementById('tarih').value,
-                mesaj: document.getElementById('mesaj').value
-            };
-
-            try {
-                const response = await fetch(`${API_URL}/randevular`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(randevuVerisi)
-                });
-
-                const sonuc = await response.json();
-
-                if (response.ok) {
-                    mesajKutusu.style.display = 'block';
-                    mesajKutusu.style.backgroundColor = '#d4edda';
-                    mesajKutusu.style.color = '#155724';
-                    mesajKutusu.textContent = 'Randevu talebiniz başarıyla alındı! Sizinle iletişime geçeceğiz.';
-                    showToast('Randevu talebiniz başarıyla alındı!', 'success');
-
-                    if (window.confetti) {
-                        confetti({
-                            particleCount: 150,
-                            spread: 70,
-                            origin: { y: 0.6 },
-                            colors: ['#0f3460', '#e94560', '#ffffff']
-                        });
-                    }
-
-                    form.reset();
-                    captchaOlustur();
-                } else {
-                    throw new Error(sonuc.mesaj || 'Randevu gönderilemedi.');
-                }
-
-            } catch (hata) {
-                console.error('Randevu Gönderme Hatası:', hata);
-                mesajKutusu.style.display = 'block';
-                mesajKutusu.style.backgroundColor = '#f8d7da';
-                mesajKutusu.style.color = '#721c24';
-                mesajKutusu.textContent = 'Bağlantı Hatası: Sunucuya ulaşılamadı.';
-                showToast('Bir hata oluştu. Lütfen daha sonra tekrar deneyin.', 'error');
-            }
-        });
-    }
-
-    // --- 3. KVKK VE ÇEREZ YÖNETİMİ ---
-    if (typeof initKVKK === 'function') {
-        initKVKK();
-    }
-
-    // --- 4. MOBİL MENÜ (HAMBURGER) ---
-    const hamburger = document.querySelector('.hamburger');
-    const navLinks = document.querySelector('.nav-links');
-    const links = document.querySelectorAll('.nav-links li');
-
-    if (hamburger) {
-        hamburger.addEventListener('click', () => {
-            navLinks.classList.toggle('nav-active');
-            
-            links.forEach((link, index) => {
-                if (link.style.animation) {
-                    link.style.animation = '';
-                } else {
-                    link.style.animation = `navLinkFade 0.5s ease forwards ${index / 7 + 0.3}s`;
-                }
-            });
-
-            hamburger.classList.toggle('toggle');
-        });
-    }
-
-    // --- 5. NAVBAR SCROLL EFEKTİ ---
-    const scrollTopBtn = document.getElementById('scrollTopBtn');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            document.body.classList.add('scrolled');
-            if(scrollTopBtn) scrollTopBtn.classList.add('visible');
-        } else {
-            document.body.classList.remove('scrolled');
-            if(scrollTopBtn) scrollTopBtn.classList.remove('visible');
-        }
-    });
-    
-    if(scrollTopBtn) {
-        scrollTopBtn.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    }
-
-    // --- 6. HİZMETLER MODAL İŞLEMLERİ ---
-    const serviceModal = document.getElementById('serviceModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalBody = document.getElementById('modalBody');
-    const closeServiceModal = document.querySelector('.close-service-modal');
-
-    function attachServiceClickEvents() {
-        const serviceCards = document.querySelectorAll('.service-card');
-        serviceCards.forEach(card => {
-            card.addEventListener('click', () => {
-                const key = card.getAttribute('data-key');
-                const data = dynamicServiceDetails[key];
-                
-                if (data) {
-                    modalTitle.innerText = data.title;
-                    modalBody.innerHTML = data.content;
-                    serviceModal.style.display = 'flex';
-                }
-            });
-        });
-    }
-    
-    attachServiceClickEvents();
-
-    if (closeServiceModal) {
-        closeServiceModal.addEventListener('click', () => serviceModal.style.display = 'none');
-    }
-    window.addEventListener('click', (e) => {
-        if (e.target == serviceModal) serviceModal.style.display = 'none';
-    });
-
-    // --- 6.1 BLOG MODAL İŞLEMLERİ ---
-    const blogModal = document.getElementById('blogModal');
-    const closeBlogModal = document.getElementById('closeBlogModal');
-
-    function openBlogModal(id) {
-        const blog = allBlogs.find(b => String(b._id || b.id) === String(id));
-        if (!blog) return;
-
-        document.getElementById('blogModalImage').src = blog.gorselUrl;
-        document.getElementById('blogModalImage').alt = blog.baslik;
-        document.getElementById('blogModalTitle').innerText = blog.baslik;
-        document.getElementById('blogModalMeta').innerHTML = `
-            <span>✍️ ${blog.yazar}</span>
-            <span style="margin-left: 20px;">📅 ${new Date(blog.createdAt).toLocaleDateString('tr-TR')}</span>
-        `;
-        document.getElementById('blogModalBody').innerHTML = blog.icerik.replace(/\n/g, '<br>');
-
-        blogModal.style.display = 'flex';
-    }
-
-    if (closeBlogModal) {
-        closeBlogModal.addEventListener('click', () => blogModal.style.display = 'none');
-    }
-    window.addEventListener('click', (e) => {
-        if (e.target == blogModal) blogModal.style.display = 'none';
-    });
-
-    // --- 7. PRELOADER ---
-    window.addEventListener('load', () => {
-        const preloader = document.getElementById('preloader');
-        if (preloader) {
-            preloader.style.opacity = '0';
-            preloader.style.visibility = 'hidden';
-        }
-    });
-
-    // --- 8. MODAL & SMOOTH SCROLL ---
-    <section id="randevu" class="randevu-section" style="padding: 80px 0; text-align: center; background: #f9f9f9;">
-    <div class="container">
-        <h2>Randevu Alın</h2>
-        <p style="margin: 20px 0; font-size: 18px; color: #555;">Randevunuzu hızlıca oluşturmak için WhatsApp hattımız üzerinden bizimle iletişime geçebilirsiniz.</p>
-        <a href="https://wa.me/905519849333?text=Merhaba,%20randevu%20almak%20istiyorum." target="_blank" class="btn-large" style="background: #25d366; color: white; padding: 15px 30px; border-radius: 5px; text-decoration: none; font-weight: bold; display: inline-block;">
-            <i class="fab fa-whatsapp"></i> WhatsApp ile Randevu Al
-        </a>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rana İşitme Kliniği</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Preloader (Yükleme Ekranı) -->
+    <div id="preloader">
+        <div class="spinner"></div>
     </div>
-</section>
-    // --- 9. RANDEVU ADIMLARI ---
-    const step1 = document.getElementById('randevuStep1');
-    const step2 = document.getElementById('randevuStep2');
-    const formArea = document.getElementById('randevuFormu');
-    const kisiselBilgiler = document.getElementById('kisiselBilgiler');
 
-    window.randevuAdimGec = (adim) => {
-        if (step1) step1.style.display = 'none';
-        if (step2) step2.style.display = 'none';
-        if (formArea) formArea.style.display = 'none';
-        
-        const sorguHata = document.getElementById('sorguHata');
-        const formMesaj = document.getElementById('formMesaj');
-        if (sorguHata) sorguHata.style.display = 'none';
-        if (formMesaj) formMesaj.style.display = 'none';
+    <!-- Toast Bildirim Alanı -->
+    <div id="toast-container" class="toast-container"></div>
 
-        let activeStep;
-        if (adim === 1) activeStep = step1;
-        if (adim === 2) activeStep = step2;
-        if (adim === 3) activeStep = formArea;
+    <!-- Yukarı Çık Butonu -->
+    <button id="scrollTopBtn" class="scroll-top-btn"><i class="fas fa-arrow-up"></i></button>
 
-        if (activeStep) {
-            activeStep.style.animation = 'none';
-            activeStep.offsetHeight; 
-            activeStep.style.animation = 'slideInRight 0.4s ease forwards';
+    <!-- Top Bar (İletişim Şeridi) -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="contact-info">
+                <span id="headerTelefon"><i class="fas fa-phone-alt"></i> 0212 123 45 67</span>
+                <span id="headerEmail"><i class="fas fa-envelope"></i> info@ranaklinik.com</span>
+                <span id="headerAdres" class="hide-mobile"><i class="fas fa-map-marker-alt"></i> Kadıköy, İstanbul</span>
+            </div>
+            <div class="social-icons-top" id="headerSocials">
+                <a href="tel:+905519849333" title="Hemen Ara"><i class="fas fa-phone"></i></a>
+                <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <header class="navbar">
+        <a href="#home" class="logo" style="text-decoration: none;">Rana<span>.</span></a>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="#home">Ana Sayfa</a></li>
+                <li><a href="hakkimizda.html">Hakkımızda</a></li>
+                <li><a href="#services">Hizmetler</a></li>
+                <li><a href="#blog">Blog</a></li>
+                <li><a href="iletisim.html">İletişim</a></li>
+                <li><a href="https://wa.me/905519849333?text=Merhaba,%20randevu%20almak%20istiyorum." target="_blank">Randevu Al</a></li>
+            </ul>
+        </nav>
+        <div class="hamburger">
+            <div class="line1"></div>
+            <div class="line2"></div>
+            <div class="line3"></div>
+        </div>
+        <a href="https://wa.me/905519849333?text=Merhaba,%20randevu%20almak%20istiyorum." target="_blank" class="btn-primary">Randevu Al</a>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>İşitmenizi Yeniden Keşfedin</h1>
+            <p>Modern teknoloji ve uzman odyologlarımızla, hayatın seslerini yeniden net ve pürüzsüz bir şekilde duymanız için yanınızdayız.</p>
+            <a href="https://wa.me/905519849333?text=Merhaba,%20randevu%20almak%20istiyorum." target="_blank" class="btn-large">Hemen Randevu Alın</a>
+        </div>
+    </section>
+
+    <section id="services" class="services">
+        <div class="section-title">
+            <h2>Hizmetlerimiz</h2>
+            <p>Size özel, modern ve dünya standartlarında işitme çözümleri sunuyoruz.</p>
+        </div>
+        <div class="services-animation-container" id="servicesContainer">
+            <div class="ear-symbol">
+                <svg width="350" height="350" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="overflow: visible;">
+                    <defs>
+                        <filter id="spark-glow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="1.5" result="coloredBlur"></feGaussianBlur>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"></feMergeNode>
+                                <feMergeNode in="SourceGraphic"></feMergeNode>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <path id="ear-path" d="M 45 25 C 75 10 95 30 90 65 C 88 85 70 95 50 90 C 35 85 35 60 50 55 C 65 50 70 65 60 70" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="0" cy="0" r="2" fill="var(--accent-color)" filter="url(#spark-glow)">
+                        <animateMotion dur="8s" repeatCount="indefinite" begin="3s">
+                            <mpath href="#ear-path"></mpath>
+                        </animateMotion>
+                    </circle>
+                </svg>
+            </div>
+            <div class="service-card" data-key="test"><div class="card-content"><div class="icon"><i class="fa-solid fa-ear-listen"></i></div><h3>İşitme Testleri</h3><p>Kapsamlı ve hassas işitme değerlendirmesi.</p></div></div>
+            <div class="service-card" data-key="cihaz"><div class="card-content"><div class="icon"><i class="fa-solid fa-ear-deaf"></i></div><h3>İşitme Cihazı</h3><p>Yaşam tarzınıza en uygun cihaz çözümleri.</p></div></div>
+            <div class="service-card" data-key="pediatrik"><div class="card-content"><div class="icon"><i class="fa-solid fa-baby"></i></div><h3>Pediatrik Odyoloji</h3><p>Bebekler ve çocuklar için özel testler.</p></div></div>
+            <div class="service-card" data-key="tinnitus"><div class="card-content"><div class="icon"><i class="fa-solid fa-bell"></i></div><h3>Tinnitus Tedavisi</h3><p>Kişiye özel ses terapileri ve danışmanlık.</p></div></div>
+        </div>
+    </section>
+
+    <!-- Doğrudan WhatsApp Yönlendirmeli Randevu Alanı (Eski Form Kaldırıldı) -->
+    <section id="randevu" class="randevu-section" style="padding: 80px 0; text-align: center; background: #f9f9f9;">
+        <div class="container">
+            <h2>Hemen Randevu Alın</h2>
+            <p style="margin: 20px 0; font-size: 18px; color: #555;">Randevunuzu bilgi doldurmadan, hızlıca WhatsApp hattımız üzerinden oluşturabilirsiniz.</p>
+            <a href="https://wa.me/905519849333?text=Merhaba,%20randevu%20almak%20istiyorum." target="_blank" class="btn-large" style="background: #25d366; color: white; padding: 15px 30px; border-radius: 5px; text-decoration: none; font-weight: bold; display: inline-block;">
+                <i class="fab fa-whatsapp"></i> WhatsApp ile Randevu Al
+            </a>
+        </div>
+    </section>
+
+    <section id="blog" class="blog-section">
+        <div class="section-title">
+            <h2>Güncel Sağlık Haberleri</h2>
+            <p>İşitme sağlığı hakkında uzmanlarımızdan tavsiyeler.</p>
+        </div>
+        <div class="blog-slider-wrapper">
+            <button class="slider-btn prev" id="prevBlogBtn"><i class="fas fa-chevron-left"></i></button>
+            <div class="blog-slider-track" id="blogKapsayici"></div>
+            <button class="slider-btn next" id="nextBlogBtn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <a href="#home" class="footer-logo" style="text-decoration: none;">Rana İşitme Kliniği<span>.</span></a>
+                <p>Modern teknoloji ve uzman kadromuzla işitme sağlığınız için güvenilir çözümler sunuyoruz.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
             
-            if (adim === 3) {
-                activeStep.style.display = 'grid';
-            } else {
-                activeStep.style.display = 'block';
-            }
-        }
-    };
+            <div class="footer-col">
+                <h4>Hızlı Erişim</h4>
+                <ul>
+                    <li><a href="#home">Ana Sayfa</a></li>
+                    <li><a href="hakkimizda.html">Hakkımızda</a></li>
+                    <li><a href="#services">Hizmetler</a></li>
+                    <li><a href="#blog">Blog</a></li>
+                    <li><a href="https://wa.me/905519849333?text=Merhaba,%20randevu%20almak%20istiyorum." target="_blank">Randevu Al</a></li>
+                </ul>
+            </div>
 
-    const btnIlkRandevu = document.getElementById('btnIlkRandevu');
-    if (btnIlkRandevu) {
-        btnIlkRandevu.addEventListener('click', () => {
-            form.reset();
-            document.getElementById('hastaId').value = '';
-            if (kisiselBilgiler) kisiselBilgiler.style.display = 'contents';
-            randevuAdimGec(3);
-            captchaOlustur();
-        });
-    }
+            <div class="footer-col">
+                <h4>İletişim</h4>
+                <ul id="footerIletisim">
+                    <li>📍 Bağdat Caddesi No: 123, Kadıköy / İstanbul</li>
+                    <li>📞 0212 123 45 67</li>
+                    <li>✉️ info@ranaklinik.com</li>
+                </ul>
+            </div>
 
-    const btnKayitliHasta = document.getElementById('btnKayitliHasta');
-    if (btnKayitliHasta) {
-        btnKayitliHasta.addEventListener('click', () => {
-            randevuAdimGec(2);
-        });
-    }
+            <div class="footer-col" id="footerSaatler">
+                <h4>Çalışma Saatleri</h4>
+                <p>Pzt - Cuma: 09:00 - 18:00</p>
+                <p>Cumartesi: 10:00 - 14:00</p>
+                <p>Pazar: Kapalı</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-bottom-content">
+                <p>&copy; 2026 Rana İşitme Kliniği. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
 
-    const btnSorgula = document.getElementById('btnSorgula');
-    if (btnSorgula) {
-        btnSorgula.addEventListener('click', async () => {
-            const tcInput = document.getElementById('sorguTc').value;
-            const tc = tcInput.replace(/\D/g, '');
-            const hata = document.getElementById('sorguHata');
-            
-            if (!tc || tc.length !== 11) { 
-                if (hata) {
-                    hata.innerText = 'Lütfen 11 haneli TC Kimlik numaranızı girin.'; 
-                    hata.style.display = 'block'; 
-                }
-                return; 
-            }
+    <!-- Hizmet Detay Modalı -->
+    <div id="serviceModal" class="service-modal">
+        <div class="service-modal-content">
+            <span class="close-service-modal">&times;</span>
+            <h3 id="modalTitle">Hizmet Başlığı</h3>
+            <div id="modalBody"></div>
+        </div>
+    </div>
 
-            try {
-                const response = await fetch(`${API_URL}/hastalar/bul?tcKimlik=${tc}`);
-                const hasta = await response.json();
+    <!-- Blog Detay Modalı -->
+    <div id="blogModal" class="service-modal">
+        <div class="service-modal-content" style="max-width: 800px;">
+            <span id="closeBlogModal" class="close-service-modal">&times;</span>
+            <img id="blogModalImage" src="" alt="" style="width: 100%; height: 300px; object-fit: cover; border-radius: 10px; margin-bottom: 20px;">
+            <h3 id="blogModalTitle">Blog Başlığı</h3>
+            <div id="blogModalMeta" style="font-size: 13px; color: #888; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;"></div>
+            <div id="blogModalBody" style="line-height: 1.7;"></div>
+        </div>
+    </div>
 
-                if (response.ok) {
-                    document.getElementById('hastaId').value = hasta.id || '';
-                    document.getElementById('adSoyad').value = hasta.adSoyad || '';
-                    document.getElementById('telefon').value = hasta.telefon || '';
-                    document.getElementById('email').value = hasta.email || '';
-                    document.getElementById('tcKimlik').value = hasta.tcKimlik || '';
-                    
-                    if (kisiselBilgiler) kisiselBilgiler.style.display = 'contents';
-                    randevuAdimGec(3);
-                    captchaOlustur();
-                } else {
-                    if (hata) {
-                        hata.innerText = 'Kayıtlı hasta bulunamadı.';
-                        hata.style.display = 'block';
-                    }
-                }
-            } catch (err) {
-                console.error('Hasta sorgulama hatası:', err);
-                if (hata) {
-                    hata.innerText = 'Sorgulama sırasında bir hata oluştu.';
-                    hata.style.display = 'block';
-                }
-            }
-        });
-    }
-});
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script type="module" src="app.js"></script>
+
+</body>
+</html>
