@@ -30,11 +30,9 @@
                 <span id="headerAdres" class="hide-mobile"><i class="fas fa-map-marker-alt"></i> Kadıköy, İstanbul</span>
             </div>
             <div class="social-icons-top" id="headerSocials">
-               <div class="social-icons-top" id="headerSocials">
-    <a href="tel:+905519849333" title="Hemen Ara"><i class="fas fa-phone"></i></a>
-    <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
-    <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
-</div>
+                <a href="tel:+905519849333" title="Hemen Ara"><i class="fas fa-phone"></i></a>
+                <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
             </div>
         </div>
     </div>
@@ -49,6 +47,7 @@
                 <li><a href="#blog">Blog</a></li>
                 <li><a href="iletisim.html">İletişim</a></li>
                 <li><a href="https://wa.me/905519849333?text=Merhaba,%20randevu%20almak%20istiyorum." target="_blank">Randevu Al</a></li>
+            </ul>
         </nav>
         <div class="hamburger">
             <div class="line1"></div>
@@ -163,3 +162,48 @@
         </div>
     </footer>
 
+    <!-- Hizmet Detay Modalı -->
+    <div id="serviceModal" class="service-modal">
+        <div class="service-modal-content">
+            <span class="close-service-modal">&times;</span>
+            <h3 id="modalTitle">Hizmet Başlığı</h3>
+            <div id="modalBody">
+                <!-- İçerik JS ile gelecek -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Blog Detay Modalı -->
+    <div id="blogModal" class="service-modal">
+        <div class="service-modal-content" style="max-width: 800px;">
+            <span id="closeBlogModal" class="close-service-modal">&times;</span>
+            <img id="blogModalImage" src="" alt="" style="width: 100%; height: 300px; object-fit: cover; border-radius: 10px; margin-bottom: 20px;">
+            <h3 id="blogModalTitle">Blog Başlığı</h3>
+            <div id="blogModalMeta" style="font-size: 13px; color: #888; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+                <!-- Meta info JS ile gelecek -->
+            </div>
+            <div id="blogModalBody" style="line-height: 1.7;">
+                <!-- İçerik JS ile gelecek -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Yasal Metin Modalı -->
+    <div id="yasalModal" class="service-modal">
+        <div class="service-modal-content" style="max-width: 800px;">
+            <span id="closeYasalModal" class="close-service-modal">&times;</span>
+            <h3 id="yasalModalTitle" style="margin-bottom: 20px; color: var(--primary-color);">Başlık</h3>
+            <div id="yasalModalBody" style="line-height: 1.7; white-space: pre-wrap;">
+                <!-- İçerik JS ile gelecek -->
+            </div>
+            <div style="text-align: right; margin-top: 20px;">
+                <button onclick="document.getElementById('yasalModal').style.display='none'" class="btn-primary" style="padding: 8px 20px; font-size: 14px;">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script type="module" src="app.js"></script>
+
+</body>
+</html>
