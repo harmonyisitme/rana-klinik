@@ -593,41 +593,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- 8. MODAL & SMOOTH SCROLL ---
-    const randevuModal = document.getElementById('randevuModal');
-    const closeRandevuModal = document.getElementById('closeRandevuModal');
-
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            const targetId = this.getAttribute('href');
-
-            if (targetId === '#randevu') {
-                e.preventDefault();
-                window.location.href = 'https://wa.me/905519849333?text=Merhaba,%20randevu%20almak%20istiyorum.';
-                return;
-            }
-
-            e.preventDefault();
-            const targetElement = document.querySelector(targetId);
-            if (targetElement) {
-                const headerOffset = 85;
-                const elementPosition = targetElement.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.scrollY - headerOffset;
-                window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-            }
-
-            if (navLinks && navLinks.classList.contains('nav-active')) {
-                hamburger.click();
-            }
-        });
-    });
-
-    if (closeRandevuModal) {
-        closeRandevuModal.addEventListener('click', () => randevuModal.style.display = 'none');
-    }
-    window.addEventListener('click', (e) => {
-        if (e.target == randevuModal) randevuModal.style.display = 'none';
-    });
-
+    <section id="randevu" class="randevu-section" style="padding: 80px 0; text-align: center; background: #f9f9f9;">
+    <div class="container">
+        <h2>Randevu Alın</h2>
+        <p style="margin: 20px 0; font-size: 18px; color: #555;">Randevunuzu hızlıca oluşturmak için WhatsApp hattımız üzerinden bizimle iletişime geçebilirsiniz.</p>
+        <a href="https://wa.me/905519849333?text=Merhaba,%20randevu%20almak%20istiyorum." target="_blank" class="btn-large" style="background: #25d366; color: white; padding: 15px 30px; border-radius: 5px; text-decoration: none; font-weight: bold; display: inline-block;">
+            <i class="fab fa-whatsapp"></i> WhatsApp ile Randevu Al
+        </a>
+    </div>
+</section>
     // --- 9. RANDEVU ADIMLARI ---
     const step1 = document.getElementById('randevuStep1');
     const step2 = document.getElementById('randevuStep2');
