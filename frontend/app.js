@@ -120,20 +120,20 @@ document.addEventListener('DOMContentLoaded', () => {
         closeBlogModal.addEventListener('click', () => blogModal.style.display = 'none');
     }
 
-    // --- KESİN WHATSAPP YÖNLENDİRME (TÜM RANDEVU BUTONLARI İÇİN) ---
-    document.querySelectorAll('a').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            const href = this.getAttribute('href');
-            const text = this.textContent.toLowerCase();
+    // --- KESİN WHATSAPP YÖNLENDİRME (GLOBAL YAKALAYICI) ---
+    document.addEventListener('click', function (e) {
+        const target = e.target.closest('a');
+        if (!target) return;
 
-            // Eğer buton randevu ile ilgiliyse ya da #randevu hedefini içeriyorsa
-            if (href === '#randevu' || text.includes('randevu') || text.includes('hemen randevu')) {
-                e.preventDefault();
-                window.location.href = 'https://wa.me/905519849333?text=Merhaba,%20randevu%20almak%20istiyorum.';
-                return;
-            }
-        });
-    });
+        const href = target.getAttribute('href') || '';
+        const text = target.textContent.trim().toLowerCase();
+
+        if (href.includes('#randevu') || text.includes('randevu')) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = 'https://wa.me/905519849333?text=Merhaba,%20randevu%20almak%20istiyorum.';
+        }
+    }, true);
 
     // Preloader
     window.addEventListener('load', () => {
