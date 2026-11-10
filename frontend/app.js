@@ -120,28 +120,17 @@ document.addEventListener('DOMContentLoaded', () => {
         closeBlogModal.addEventListener('click', () => blogModal.style.display = 'none');
     }
 
-    // --- WHATSAPP YÖNLENDİRME (#RANDEVU BAĞLANTILARI İÇİN) ---
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    // --- KESİN WHATSAPP YÖNLENDİRME (TÜM RANDEVU BUTONLARI İÇİN) ---
+    document.querySelectorAll('a').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            const targetId = this.getAttribute('href');
+            const href = this.getAttribute('href');
+            const text = this.textContent.toLowerCase();
 
-            if (targetId === '#randevu') {
+            // Eğer buton randevu ile ilgiliyse ya da #randevu hedefini içeriyorsa
+            if (href === '#randevu' || text.includes('randevu') || text.includes('hemen randevu')) {
                 e.preventDefault();
                 window.location.href = 'https://wa.me/905519849333?text=Merhaba,%20randevu%20almak%20istiyorum.';
                 return;
-            }
-
-            e.preventDefault();
-            const targetElement = document.querySelector(targetId);
-            if (targetElement) {
-                const headerOffset = 85;
-                const elementPosition = targetElement.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.scrollY - headerOffset;
-                window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-            }
-
-            if (navLinks && navLinks.classList.contains('nav-active')) {
-                hamburger.click();
             }
         });
     });
