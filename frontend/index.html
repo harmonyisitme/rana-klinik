@@ -1,194 +1,27 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rana İşitme Kliniği</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
+```html
+<!-- WhatsApp Randevu Bağlantısı -->
+https://wa.me/905519849333?text=Merhaba%2C%20Rana%20%C4%B0%C5%9Fitme%20Merkezi%27nden%20randevu%20almak%20istiyorum.
+```
 
-    <!-- Preloader (Yükleme Ekranı) -->
-    <div id="preloader">
-        <div class="spinner"></div>
-    </div>
+**Bu bağlantıyı tüm Randevu Al butonlarında kullan:**
 
-    <!-- Toast Bildirim Alanı -->
-    <div id="toast-container" class="toast-container"></div>
+```html
+<!-- Menüdeki Randevu Al -->
+<a href="https://wa.me/905519849333?text=Merhaba%2C%20Rana%20%C4%B0%C5%9Fitme%20Merkezi%27nden%20randevu%20almak%20istiyorum."
+   target="_blank">
+   Randevu Al
+</a>
 
-    <!-- Yukarı Çık Butonu -->
-    <button id="scrollTopBtn" class="scroll-top-btn"><i class="fas fa-arrow-up"></i></button>
+<!-- Ana Sayfadaki Hemen Randevu Alın -->
+<a href="https://wa.me/905519849333?text=Merhaba%2C%20Rana%20%C4%B0%C5%9Fitme%20Merkezi%27nden%20randevu%20almak%20istiyorum."
+   target="_blank"
+   class="btn-large">
+   Hemen Randevu Alın
+</a>
 
-    <!-- Top Bar (İletişim Şeridi) -->
-    <div class="top-bar">
-        <div class="container">
-            <div class="contact-info">
-                <span id="headerTelefon"><i class="fas fa-phone-alt"></i> 0212 123 45 67</span>
-                <span id="headerEmail"><i class="fas fa-envelope"></i> info@ranaklinik.com</span>
-                <span id="headerAdres" class="hide-mobile"><i class="fas fa-map-marker-alt"></i> Kadıköy, İstanbul</span>
-            </div>
-            <div class="social-icons-top" id="headerSocials">
-                <a href="tel:+905519849333" title="Hemen Ara"><i class="fas fa-phone"></i></a>
-                <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
-            </div>
-        </div>
-    </div>
-
-    <header class="navbar">
-        <a href="#home" class="logo" style="text-decoration: none;">Rana<span>.</span></a>
-        <nav>
-            <ul class="nav-links">
-                <li><a href="#home">Ana Sayfa</a></li>
-                <li><a href="hakkimizda.html">Hakkımızda</a></li>
-                <li><a href="#services">Hizmetler</a></li>
-                <li><a href="#blog">Blog</a></li>
-                <li><a href="iletisim.html">İletişim</a></li>
-                <li><a href="https://wa.me/905519849333?text=Merhaba,%20randevu%20almak%20istiyorum." target="_blank">Randevu Al</a></li>
-            </ul>
-        </nav>
-        <div class="hamburger">
-            <div class="line1"></div>
-            <div class="line2"></div>
-            <div class="line3"></div>
-        </div>
-        <a href="https://wa.me/905519849333?text=Merhaba,%20randevu%20almak%20istiyorum." target="_blank" class="btn-primary">Randevu Al</a>
-    </header>
-
-    <section id="home" class="hero">
-        <div class="hero-content">
-            <h1>İşitmenizi Yeniden Keşfedin</h1>
-            <p>Modern teknoloji ve uzman odyologlarımızla, hayatın seslerini yeniden net ve pürüzsüz bir şekilde duymanız için yanınızdayız.</p>
-            <a href="https://wa.me/905519849333?text=Merhaba,%20randevu%20almak%20istiyorum." target="_blank" class="btn-large">Hemen Randevu Alın</a>
-        </div>
-    </section>
-
-    <section id="services" class="services">
-        <div class="section-title">
-            <h2>Hizmetlerimiz</h2>
-            <p>Size özel, modern ve dünya standartlarında işitme çözümleri sunuyoruz.</p>
-        </div>
-        <div class="services-animation-container" id="servicesContainer">
-            <div class="ear-symbol">
-                <svg width="350" height="350" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="overflow: visible;">
-                    <defs>
-                        <filter id="spark-glow" x="-50%" y="-50%" width="200%" height="200%">
-                            <feGaussianBlur stdDeviation="1.5" result="coloredBlur"></feGaussianBlur>
-                            <feMerge>
-                                <feMergeNode in="coloredBlur"></feMergeNode>
-                                <feMergeNode in="SourceGraphic"></feMergeNode>
-                            </feMerge>
-                        </filter>
-                    </defs>
-                    <path id="ear-path" d="M 45 25 C 75 10 95 30 90 65 C 88 85 70 95 50 90 C 35 85 35 60 50 55 C 65 50 70 65 60 70" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <circle cx="0" cy="0" r="2" fill="var(--accent-color)" filter="url(#spark-glow)">
-                        <animateMotion dur="8s" repeatCount="indefinite" begin="3s">
-                            <mpath href="#ear-path"></mpath>
-                        </animateMotion>
-                    </circle>
-                </svg>
-            </div>
-            <div class="service-card" data-key="test"><div class="card-content"><div class="icon"><i class="fa-solid fa-ear-listen"></i></div><h3>İşitme Testleri</h3><p>Kapsamlı ve hassas işitme değerlendirmesi.</p></div></div>
-            <div class="service-card" data-key="cihaz"><div class="card-content"><div class="icon"><i class="fa-solid fa-ear-deaf"></i></div><h3>İşitme Cihazı</h3><p>Yaşam tarzınıza en uygun cihaz çözümleri.</p></div></div>
-            <div class="service-card" data-key="pediatrik"><div class="card-content"><div class="icon"><i class="fa-solid fa-baby"></i></div><h3>Pediatrik Odyoloji</h3><p>Bebekler ve çocuklar için özel testler.</p></div></div>
-            <div class="service-card" data-key="tinnitus"><div class="card-content"><div class="icon"><i class="fa-solid fa-bell"></i></div><h3>Tinnitus Tedavisi</h3><p>Kişiye özel ses terapileri ve danışmanlık.</p></div></div>
-        </div>
-    </section>
-
-    <!-- Doğrudan WhatsApp Yönlendirmeli Randevu Alanı (Eski Form Kaldırıldı) -->
-    <section id="randevu" class="randevu-section" style="padding: 80px 0; text-align: center; background: #f9f9f9;">
-        <div class="container">
-            <h2>Hemen Randevu Alın</h2>
-            <p style="margin: 20px 0; font-size: 18px; color: #555;">Randevunuzu bilgi doldurmadan, hızlıca WhatsApp hattımız üzerinden oluşturabilirsiniz.</p>
-            <a href="https://wa.me/905519849333?text=Merhaba,%20randevu%20almak%20istiyorum." target="_blank" class="btn-large" style="background: #25d366; color: white; padding: 15px 30px; border-radius: 5px; text-decoration: none; font-weight: bold; display: inline-block;">
-                <i class="fab fa-whatsapp"></i> WhatsApp ile Randevu Al
-            </a>
-        </div>
-    </section>
-
-    <section id="blog" class="blog-section">
-        <div class="section-title">
-            <h2>Güncel Sağlık Haberleri</h2>
-            <p>İşitme sağlığı hakkında uzmanlarımızdan tavsiyeler.</p>
-        </div>
-        <div class="blog-slider-wrapper">
-            <button class="slider-btn prev" id="prevBlogBtn"><i class="fas fa-chevron-left"></i></button>
-            <div class="blog-slider-track" id="blogKapsayici"></div>
-            <button class="slider-btn next" id="nextBlogBtn"><i class="fas fa-chevron-right"></i></button>
-        </div>
-    </section>
-
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-col">
-                <a href="#home" class="footer-logo" style="text-decoration: none;">Rana İşitme Kliniği<span>.</span></a>
-                <p>Modern teknoloji ve uzman kadromuzla işitme sağlığınız için güvenilir çözümler sunuyoruz.</p>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                </div>
-            </div>
-            
-            <div class="footer-col">
-                <h4>Hızlı Erişim</h4>
-                <ul>
-                    <li><a href="#home">Ana Sayfa</a></li>
-                    <li><a href="hakkimizda.html">Hakkımızda</a></li>
-                    <li><a href="#services">Hizmetler</a></li>
-                    <li><a href="#blog">Blog</a></li>
-                    <li><a href="https://wa.me/905519849333?text=Merhaba,%20randevu%20almak%20istiyorum." target="_blank">Randevu Al</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-col">
-                <h4>İletişim</h4>
-                <ul id="footerIletisim">
-                    <li>📍 Bağdat Caddesi No: 123, Kadıköy / İstanbul</li>
-                    <li>📞 0212 123 45 67</li>
-                    <li>✉️ info@ranaklinik.com</li>
-                </ul>
-            </div>
-
-            <div class="footer-col" id="footerSaatler">
-                <h4>Çalışma Saatleri</h4>
-                <p>Pzt - Cuma: 09:00 - 18:00</p>
-                <p>Cumartesi: 10:00 - 14:00</p>
-                <p>Pazar: Kapalı</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <div class="footer-bottom-content">
-                <p>&copy; 2026 Rana İşitme Kliniği. Tüm hakları saklıdır.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Hizmet Detay Modalı -->
-    <div id="serviceModal" class="service-modal">
-        <div class="service-modal-content">
-            <span class="close-service-modal">&times;</span>
-            <h3 id="modalTitle">Hizmet Başlığı</h3>
-            <div id="modalBody"></div>
-        </div>
-    </div>
-
-    <!-- Blog Detay Modalı -->
-    <div id="blogModal" class="service-modal">
-        <div class="service-modal-content" style="max-width: 800px;">
-            <span id="closeBlogModal" class="close-service-modal">&times;</span>
-            <img id="blogModalImage" src="" alt="" style="width: 100%; height: 300px; object-fit: cover; border-radius: 10px; margin-bottom: 20px;">
-            <h3 id="blogModalTitle">Blog Başlığı</h3>
-            <div id="blogModalMeta" style="font-size: 13px; color: #888; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;"></div>
-            <div id="blogModalBody" style="line-height: 1.7;"></div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script type="module" src="app.js"></script>
-
-</body>
-</html>
+<!-- WhatsApp Randevu Butonu -->
+<a href="https://wa.me/905519849333?text=Merhaba%2C%20Rana%20%C4%B0%C5%9Fitme%20Merkezi%27nden%20randevu%20almak%20istiyorum."
+   target="_blank"
+   class="btn-large">
+   <i class="fab fa-whatsapp"></i> WhatsApp ile Randevu Al
+</a>```
