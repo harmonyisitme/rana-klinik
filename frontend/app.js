@@ -628,30 +628,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- 8. MODAL & SMOOTH SCROLL ---
+  // --- 8. MODAL & SMOOTH SCROLL ---
     const randevuModal = document.getElementById('randevuModal');
     const closeRandevuModal = document.getElementById('closeRandevuModal');
 
-    // YENİ: Sayfa yüklendiğinde URL'de #randevu varsa modalı aç (Dış sayfalardan gelen linkler için)
-    if (window.location.hash === '#randevu' && randevuModal) {
-        randevuModal.style.display = 'flex';
-    }
-
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            e.preventDefault();
             const targetId = this.getAttribute('href');
 
             if (targetId === '#randevu') {
-                randevuModal.style.display = 'flex';
-            } else {
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    const headerOffset = 85;
-                    const elementPosition = targetElement.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + window.scrollY - headerOffset;
-                    window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-                }
+                e.preventDefault();
+                // Formu açmak yerine doğrudan WhatsApp'a yönlendir
+                window.location.href = 'https://wa.me/905519849333?text=Merhaba,%20randevu%20almak%20istiyorum.';
+                return;
+            }
+
+            e.preventDefault();
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                const headerOffset = 85;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.scrollY - headerOffset;
+                window.scrollTo({ top: offsetPosition, behavior: "smooth" });
             }
 
             // Mobil menü açıksa kapat
@@ -668,7 +666,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('click', (e) => {
         if (e.target == randevuModal) randevuModal.style.display = 'none';
     });
-
     // --- 9. RANDEVU ADIMLARI (YENİ) ---
     const step1 = document.getElementById('randevuStep1');
     const step2 = document.getElementById('randevuStep2');
