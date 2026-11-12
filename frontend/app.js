@@ -15,8 +15,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const WHATSAPP_URL =
         `https://wa.me/${WHATSAPP_NUMARA}?text=${encodeURIComponent(WHATSAPP_MESAJ)}`;
 
-    // WhatsApp'ı aç
+    // WHATSAPP DÖNÜŞÜM ÖLÇÜMÜ VE AÇILIŞI
     function whatsappRandevuAc() {
+
+        window.dataLayer = window.dataLayer || [];
+
+        window.dataLayer.push({
+            event: 'whatsapp_lead',
+            lead_type: 'whatsapp',
+            lead_source: 'website'
+        });
+
         window.open(WHATSAPP_URL, '_blank', 'noopener,noreferrer');
     }
 
