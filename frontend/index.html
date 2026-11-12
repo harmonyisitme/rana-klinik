@@ -35,21 +35,20 @@
     </noscript>
     <!-- GOOGLE TAG MANAGER NOSCRIPT END -->
 
-    <!-- WHATSAPP RANDEVU BAĞLANTISI -->
-    <!-- Preloader -->
+    <!-- PRELOADER -->
     <div id="preloader">
         <div class="spinner"></div>
     </div>
 
-    <!-- Toast Bildirim Alanı -->
+    <!-- TOAST BİLDİRİM ALANI -->
     <div id="toast-container" class="toast-container"></div>
 
-    <!-- Yukarı Çık Butonu -->
+    <!-- YUKARI ÇIK BUTONU -->
     <button id="scrollTopBtn" class="scroll-top-btn">
         <i class="fas fa-arrow-up"></i>
     </button>
 
-    <!-- Top Bar -->
+    <!-- TOP BAR -->
     <div class="top-bar">
         <div class="container">
             <div class="contact-info">
@@ -379,14 +378,23 @@
         </div>
     </div>
 
-    <!-- ÖLÇÜM: TELEFON VE WHATSAPP TIKLAMALARI -->
+    <!-- TELEFON VE WHATSAPP DÖNÜŞÜM ÖLÇÜMÜ -->
     <script>
     window.dataLayer = window.dataLayer || [];
 
     document.addEventListener('click', function(event) {
-        const whatsappLink = event.target.closest('a.whatsapp-link');
+        const link = event.target.closest('a');
 
-        if (whatsappLink) {
+        if (!link) return;
+
+        const href = link.getAttribute('href') || '';
+
+        // WHATSAPP TIKLAMASI
+        if (
+            href.includes('wa.me') ||
+            href.includes('api.whatsapp.com') ||
+            link.classList.contains('whatsapp-link')
+        ) {
             window.dataLayer.push({
                 event: 'whatsapp_lead',
                 lead_type: 'whatsapp',
@@ -395,14 +403,13 @@
             return;
         }
 
-        const phoneLink = event.target.closest('a[href^="tel:"]');
-
-        if (phoneLink) {
+        // TELEFON TIKLAMASI
+        if (href.startsWith('tel:')) {
             window.dataLayer.push({
                 event: 'phone_lead',
                 lead_type: 'phone',
                 lead_source: 'website',
-                phone_number: phoneLink.getAttribute('href')
+                phone_number: href
             });
         }
     }, true);
