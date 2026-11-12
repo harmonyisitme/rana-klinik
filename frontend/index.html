@@ -6,16 +6,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rana İşitme Merkezi</title>
 
+    <!-- GOOGLE TAG MANAGER -->
+    <script>
+    (function(w,d,s,l,i){
+        w[l]=w[l]||[];
+        w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+        var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),
+        dl=l!='dataLayer'?'&l='+l:'';
+        j.async=true;
+        j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+        f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NG5WXPCD');
+    </script>
+    <!-- GOOGLE TAG MANAGER END -->
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 </head>
+
 <body>
 
-    <!-- WHATSAPP RANDEVU BAĞLANTISI -->
-    <!-- Tüm randevu butonları bu numaraya yönlendirilir. -->
+    <!-- GOOGLE TAG MANAGER NOSCRIPT -->
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NG5WXPCD"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <!-- GOOGLE TAG MANAGER NOSCRIPT END -->
 
+    <!-- WHATSAPP RANDEVU BAĞLANTISI -->
     <!-- Preloader -->
     <div id="preloader">
         <div class="spinner"></div>
@@ -32,7 +52,6 @@
     <!-- Top Bar -->
     <div class="top-bar">
         <div class="container">
-
             <div class="contact-info">
                 <span id="headerTelefon">
                     <i class="fas fa-phone-alt"></i> 0212 123 45 67
@@ -60,38 +79,33 @@
                     <i class="fab fa-instagram"></i>
                 </a>
             </div>
-
         </div>
     </div>
 
     <!-- NAVBAR -->
     <header class="navbar">
 
-       <a href="#home" class="logo" style="text-decoration: none;">
-    <img src="logo.png" alt="Rana İşitme Merkezi"
-         style="height: 55px; width: auto; object-fit: contain;">
-</a>
+        <a href="#home" class="logo" style="text-decoration: none;">
+            <img src="logo.png" alt="Rana İşitme Merkezi"
+                 style="height: 55px; width: auto; object-fit: contain;">
+        </a>
+
         <nav>
             <ul class="nav-links">
-
                 <li><a href="#home">Ana Sayfa</a></li>
-
                 <li><a href="hakkimizda.html">Hakkımızda</a></li>
-
                 <li><a href="#services">Hizmetler</a></li>
-
                 <li><a href="#blog">Blog</a></li>
-
                 <li><a href="iletisim.html">İletişim</a></li>
 
                 <li>
                     <a href="https://wa.me/905519849333?text=Merhaba%2C%20Rana%20%C4%B0%C5%9Fitme%20Merkezi%27nden%20randevu%20almak%20istiyorum."
                        target="_blank"
-                       rel="noopener noreferrer">
+                       rel="noopener noreferrer"
+                       class="whatsapp-link">
                         Randevu Al
                     </a>
                 </li>
-
             </ul>
         </nav>
 
@@ -101,21 +115,17 @@
             <div class="line3"></div>
         </div>
 
-        <!-- Sağ Üst Randevu Butonu -->
         <a href="https://wa.me/905519849333?text=Merhaba%2C%20Rana%20%C4%B0%C5%9Fitme%20Merkezi%27nden%20randevu%20almak%20istiyorum."
            target="_blank"
            rel="noopener noreferrer"
-           class="btn-primary">
+           class="btn-primary whatsapp-link">
             Randevu Al
         </a>
-
     </header>
 
     <!-- ANA SAYFA -->
     <section id="home" class="hero">
-
         <div class="hero-content">
-
             <h1>İşitmenizi Yeniden Keşfedin</h1>
 
             <p>
@@ -124,21 +134,17 @@
                 duymanız için yanınızdayız.
             </p>
 
-            <!-- Ana Sayfa Randevu Butonu -->
             <a href="https://wa.me/905519849333?text=Merhaba%2C%20Rana%20%C4%B0%C5%9Fitme%20Merkezi%27nden%20randevu%20almak%20istiyorum."
                target="_blank"
                rel="noopener noreferrer"
-               class="btn-large">
+               class="btn-large whatsapp-link">
                 Hemen Randevu Alın
             </a>
-
         </div>
-
     </section>
 
     <!-- HİZMETLERİMİZ -->
     <section id="services" class="services">
-
         <div class="section-title">
             <h2>Hizmetlerimiz</h2>
             <p>
@@ -148,9 +154,7 @@
         </div>
 
         <div class="services-animation-container" id="servicesContainer">
-
             <div class="ear-symbol">
-
                 <svg width="350" height="350"
                      viewBox="0 0 100 100"
                      xmlns="http://www.w3.org/2000/svg"
@@ -160,7 +164,6 @@
                         <filter id="spark-glow"
                                 x="-50%" y="-50%"
                                 width="200%" height="200%">
-
                             <feGaussianBlur
                                 stdDeviation="1.5"
                                 result="coloredBlur">
@@ -170,7 +173,6 @@
                                 <feMergeNode in="coloredBlur"></feMergeNode>
                                 <feMergeNode in="SourceGraphic"></feMergeNode>
                             </feMerge>
-
                         </filter>
                     </defs>
 
@@ -185,19 +187,13 @@
                             r="2"
                             fill="var(--accent-color)"
                             filter="url(#spark-glow)">
-
                         <animateMotion dur="8s"
                                        repeatCount="indefinite"
                                        begin="3s">
-
                             <mpath href="#ear-path"></mpath>
-
                         </animateMotion>
-
                     </circle>
-
                 </svg>
-
             </div>
 
             <div class="service-card" data-key="test">
@@ -239,9 +235,7 @@
                     <p>Kişiye özel ses terapileri ve danışmanlık.</p>
                 </div>
             </div>
-
         </div>
-
     </section>
 
     <!-- WHATSAPP RANDEVU ALANI -->
@@ -250,7 +244,6 @@
              style="padding: 80px 0; text-align: center; background: #f9f9f9;">
 
         <div class="container">
-
             <h2>Hemen Randevu Alın</h2>
 
             <p style="margin: 20px 0; font-size: 18px; color: #555;">
@@ -261,28 +254,23 @@
             <a href="https://wa.me/905519849333?text=Merhaba%2C%20Rana%20%C4%B0%C5%9Fitme%20Merkezi%27nden%20randevu%20almak%20istiyorum."
                target="_blank"
                rel="noopener noreferrer"
-               class="btn-large"
+               class="btn-large whatsapp-link"
                style="background: #25d366; color: white; padding: 15px 30px; border-radius: 5px; text-decoration: none; font-weight: bold; display: inline-block;">
 
                 <i class="fab fa-whatsapp"></i>
                 WhatsApp ile Randevu Al
-
             </a>
-
         </div>
-
     </section>
 
     <!-- BLOG -->
     <section id="blog" class="blog-section">
-
         <div class="section-title">
             <h2>Güncel Sağlık Haberleri</h2>
             <p>İşitme sağlığı hakkında uzmanlarımızdan tavsiyeler.</p>
         </div>
 
         <div class="blog-slider-wrapper">
-
             <button class="slider-btn prev" id="prevBlogBtn">
                 <i class="fas fa-chevron-left"></i>
             </button>
@@ -292,18 +280,14 @@
             <button class="slider-btn next" id="nextBlogBtn">
                 <i class="fas fa-chevron-right"></i>
             </button>
-
         </div>
-
     </section>
 
     <!-- FOOTER -->
     <footer class="footer">
-
         <div class="footer-container">
 
             <div class="footer-col">
-
                 <a href="#home"
                    class="footer-logo"
                    style="text-decoration: none;">
@@ -321,13 +305,10 @@
                     <a href="#"><i class="fab fa-instagram"></i></a>
                     <a href="#"><i class="fab fa-linkedin-in"></i></a>
                 </div>
-
             </div>
 
             <div class="footer-col">
-
                 <h4>Hızlı Erişim</h4>
-
                 <ul>
                     <li><a href="#home">Ana Sayfa</a></li>
                     <li><a href="hakkimizda.html">Hakkımızda</a></li>
@@ -337,68 +318,50 @@
                     <li>
                         <a href="https://wa.me/905519849333?text=Merhaba%2C%20Rana%20%C4%B0%C5%9Fitme%20Merkezi%27nden%20randevu%20almak%20istiyorum."
                            target="_blank"
-                           rel="noopener noreferrer">
+                           rel="noopener noreferrer"
+                           class="whatsapp-link">
                             Randevu Al
                         </a>
                     </li>
                 </ul>
-
             </div>
 
             <div class="footer-col">
-
                 <h4>İletişim</h4>
-
                 <ul id="footerIletisim">
                     <li>📍 Bağdat Caddesi No: 123, Kadıköy / İstanbul</li>
                     <li>📞 0212 123 45 67</li>
                     <li>✉️ info@ranaklinik.com</li>
                 </ul>
-
             </div>
 
             <div class="footer-col" id="footerSaatler">
-
                 <h4>Çalışma Saatleri</h4>
-
                 <p>Pzt - Cuma: 09:00 - 18:00</p>
                 <p>Cumartesi: 10:00 - 14:00</p>
                 <p>Pazar: Kapalı</p>
-
             </div>
-
         </div>
 
         <div class="footer-bottom">
-
             <div class="footer-bottom-content">
                 <p>&copy; 2026 Rana İşitme Kliniği. Tüm hakları saklıdır.</p>
             </div>
-
         </div>
-
     </footer>
 
     <!-- HİZMET DETAY MODALI -->
     <div id="serviceModal" class="service-modal">
-
         <div class="service-modal-content">
-
             <span class="close-service-modal">&times;</span>
-
             <h3 id="modalTitle">Hizmet Başlığı</h3>
-
             <div id="modalBody"></div>
-
         </div>
-
     </div>
 
     <!-- BLOG DETAY MODALI -->
     <div id="blogModal" class="service-modal">
-
         <div class="service-modal-content" style="max-width: 800px;">
-
             <span id="closeBlogModal" class="close-service-modal">&times;</span>
 
             <img id="blogModalImage"
@@ -413,14 +376,40 @@
             </div>
 
             <div id="blogModalBody" style="line-height: 1.7;"></div>
-
         </div>
-
     </div>
+
+    <!-- ÖLÇÜM: TELEFON VE WHATSAPP TIKLAMALARI -->
+    <script>
+    window.dataLayer = window.dataLayer || [];
+
+    document.addEventListener('click', function(event) {
+        const whatsappLink = event.target.closest('a.whatsapp-link');
+
+        if (whatsappLink) {
+            window.dataLayer.push({
+                event: 'whatsapp_lead',
+                lead_type: 'whatsapp',
+                lead_source: 'website'
+            });
+            return;
+        }
+
+        const phoneLink = event.target.closest('a[href^="tel:"]');
+
+        if (phoneLink) {
+            window.dataLayer.push({
+                event: 'phone_lead',
+                lead_type: 'phone',
+                lead_source: 'website',
+                phone_number: phoneLink.getAttribute('href')
+            });
+        }
+    }, true);
+    </script>
 
     <!-- SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
     <script type="module" src="app.js"></script>
 
 </body>
